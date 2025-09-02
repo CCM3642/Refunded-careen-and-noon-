@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crispy Chicken Delivery Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --crispy-red: #d32f2f;
+            --crispy-dark: #b71c1c;
+            --crispy-light: #ffcdd2;
+            --crispy-accent: #ff9800;
+            --bg-light: #f8f9fa;
+            --bg-dark: #212529;
+            --text-light: #333;
+            --text-dark: #f8f9fa;
+        }
+        
+        [data-theme="dark"] {
+            --bg-light: #212529;
+            --bg-dark: #343a40;
+            --text-light: #f8f9fa;
+            --text-dark: #dee2e6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--crispy-red) 0%, var(--crispy-dark) 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 2rem;
+            color: var(--crispy-accent);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--crispy-red) 0%, var(--crispy-dark) 100%);
+            color: white;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 15px 20px;
+        }
+        
+        .btn-crispy {
+            background-color: var(--crispy-red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-crispy:hover {
+            background-color: var(--crispy-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-crispy {
+            border: 2px solid var(--crispy-red);
+            color: var(--crispy-red);
+            background: transparent;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-crispy:hover {
+            background-color: var(--crispy-red);
+            color: white;
+        }
+        
+        .stats-card {
+            border-left: 5px solid var(--crispy-red);
+            padding-left: 15px;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .stats-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--crispy-red);
+        }
+        
+        .stats-card p {
+            margin: 0;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .table {
+            color: var(--text-light);
+        }
+        
+        .table th {
+            background-color: var(--crispy-light);
+            color: var(--crispy-dark);
+            font-weight: 600;
+            border: none;
+        }
+        
+        .table td {
+            vertical-align: middle;
+            border-color: rgba(255,255,255,0.1);
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+        
+        .badge-open {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+        
+        .badge-sent {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        
+        .badge-closed {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .action-buttons button {
+            margin-right: 5px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .action-buttons button:hover {
+            transform: scale(1.1);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 10px 15px;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--crispy-red);
+            box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.25);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        
+        .filter-section {
+            background-color: var(--bg-dark);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            color: var(--text-light);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 30px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: white;
+            border-left: 5px solid var(--crispy-red);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+        
+        [data-theme="dark"] .notification {
+            background-color: #343a40;
+            color: var(--text-light);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification i {
+            margin-right: 10px;
+            color: var(--crispy-red);
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--crispy-red);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background-color: var(--crispy-dark);
+        }
+        
+        .progress-container {
+            margin-top: 5px;
+            height: 5px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--crispy-red);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .modal-content {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .floating-action-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--crispy-red);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-action-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--crispy-dark);
+        }
+        
+        .ticket-timeline {
+            position: relative;
+            margin-top: 20px;
+            padding-left: 30px;
+        }
+        
+        .ticket-timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: var(--crispy-light);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--crispy-red);
+        }
+        
+        .timeline-item h6 {
+            margin-bottom: 5px;
+            color: var(--crispy-red);
+        }
+        
+        .timeline-item p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .search-highlight {
+            background-color: yellow;
+            color: black;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-card {
+                margin-bottom: 20px;
+            }
+            
+            .action-buttons button {
+                margin-bottom: 5px;
+            }
+            
+            .notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(211, 47, 47, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
+            }
+        }
+        
+        .select2-container--bootstrap4 .select2-selection--single {
+            height: 38px;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            border: 1px solid #ced4da;
+        }
+        
+        .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+            color: var(--text-light);
+            line-height: 36px;
+            padding-left: 15px;
+        }
+        
+        .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
+        
+        .select2-dropdown {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            border: 1px solid #ced4da;
+        }
+        
+        .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--crispy-red);
+            color: white;
+        }
+        
+        .drag-over {
+            border: 2px dashed var(--crispy-red);
+            background-color: rgba(211, 47, 47, 0.1);
+        }
+        
+        .file-drop-area {
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-drop-area:hover {
+            border-color: var(--crispy-red);
+        }
+        
+        .file-drop-area.drag-over {
+            border-color: var(--crispy-red);
+            background-color: rgba(211, 47, 47, 0.1);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-list {
+            margin-top: 10px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+        
+        .file-item button {
+            background: none;
+            border: none;
+            color: var(--crispy-red);
+            cursor: pointer;
+        }
+        
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        
+        @keyframes skeleton-loading {
+            0% {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+        }
+        
+        .skeleton-text {
+            height: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .skeleton-text:last-child {
+            width: 70%;
+        }
+        
+        .tooltip-inner {
+            background-color: var(--crispy-dark);
+        }
+        
+        .bs-tooltip-auto[x-placement^=top] .arrow::before,
+        .bs-tooltip-top .arrow::before {
+            border-top-color: var(--crispy-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-fire"></i>
+                Crispy Chicken Delivery System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-list-task"></i> Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-graph-up"></i> Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-gear"></i> Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-4">
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h3 id="totalTickets">0</h3>
+                        <p>Total Tickets</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h3 id="openTickets">0</h3>
+                        <p>Open Tickets</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h3 id="sentTickets">0</h3>
+                        <p>Sent Tickets</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h3 id="closedTickets">0</h3>
+                        <p>Closed Tickets</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Tickets by Platform</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Tickets by Branch</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="branchChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add New Ticket Form -->
+        <div class="card mb-4" id="addTicketCard">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Ticket</h5>
+            </div>
+            <div class="card-body">
+                <form id="ticketForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="orderId" class="form-label">Order ID</label>
+                            <input type="text" class="form-control" id="orderId" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="branch" class="form-label">Branch</label>
+                            <select class="form-select" id="branch" required>
+                                <option value="">Select Branch</option>
+                                <option value="Khaldia">Crispy Chicken Khaldia</option>
+                                <option value="Muroor">Crispy Chicken Muroor</option>
+                                <option value="Shabiya11">Crispy Chicken Shabiya 11</option>
+                                <option value="AlBarsha">Crispy Chicken Al Barsha</option>
+                                <option value="AlSatwa">Crispy Chicken Al Satwa</option>
+                                <option value="Electra">Crispy Chicken Electra</option>
+                                <option value="Hamdan">Crispy Chicken Hamdan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="platform" class="form-label">Platform</label>
+                            <select class="form-select" id="platform" required>
+                                <option value="">Select Platform</option>
+                                <option value="Noon">Noon</option>
+                                <option value="Careem">Careem</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" required>
+                                <option value="Open">Open</option>
+                                <option value="Sent">Sent</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="issue" class="form-label">Issue Description</label>
+                            <textarea class="form-control" id="issue" rows="2" required></textarea>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="evidence" class="form-label">Evidence (link or None)</label>
+                            <input type="text" class="form-control" id="evidence">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Attach Files</label>
+                            <div class="file-drop-area" id="fileDropArea">
+                                <i class="bi bi-cloud-arrow-up fs-1 text-muted"></i>
+                                <p class="mb-0">Drag & drop files here or click to browse</p>
+                                <input type="file" class="file-input" id="fileInput" multiple>
+                                <div class="file-list" id="fileList"></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-crispy">
+                                <i class="bi bi-plus-circle"></i> Add Ticket
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary ms-2">
+                                <i class="bi bi-arrow-clockwise"></i> Reset Form
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="searchOrder" class="form-label">Search Order ID</label>
+                    <input type="text" class="form-control" id="searchOrder" placeholder="Enter Order ID">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="filterBranch" class="form-label">Filter by Branch</label>
+                    <select class="form-select" id="filterBranch">
+                        <option value="">All Branches</option>
+                        <option value="Khaldia">Crispy Chicken Khaldia</option>
+                        <option value="Muroor">Crispy Chicken Muroor</option>
+                        <option value="Shabiya11">Crispy Chicken Shabiya 11</option>
+                        <option value="AlBarsha">Crispy Chicken Al Barsha</option>
+                        <option value="AlSatwa">Crispy Chicken Al Satwa</option>
+                        <option value="Electra">Crispy Chicken Electra</option>
+                        <option value="Hamdan">Crispy Chicken Hamdan</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="filterPlatform" class="form-label">Filter by Platform</label>
+                    <select class="form-select" id="filterPlatform">
+                        <option value="">All Platforms</option>
+                        <option value="Noon">Noon</option>
+                        <option value="Careem">Careem</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="filterStatus" class="form-label">Filter by Status</label>
+                    <select class="form-select" id="filterStatus">
+                        <option value="">All Statuses</option>
+                        <option value="Open">Open</option>
+                        <option value="Sent">Sent</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-crispy" onclick="applyFilters()">
+                        <i class="bi bi-funnel"></i> Apply Filters
+                    </button>
+                    <button class="btn btn-outline-secondary ms-2" onclick="resetFilters()">
+                        <i class="bi bi-x-circle"></i> Reset Filters
+                    </button>
+                    <button class="btn btn-outline-crispy ms-2" onclick="exportToCSV()">
+                        <i class="bi bi-download"></i> Export to CSV
+                    </button>
+                    <button class="btn btn-outline-info ms-2" onclick="exportToPDF()">
+                        <i class="bi bi-file-earmark-pdf"></i> Export to PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets Table -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-list-task"></i> Delivery Tickets</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="ticketsTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Branch</th>
+                                <th>Platform</th>
+                                <th>Issue</th>
+                                <th>Evidence</th>
+                                <th>Status</th>
+                                <th>Date Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalRecords">0</span> entries
+                    </div>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2023 Crispy Chicken Delivery Management System. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>Developed by <strong>Crispy Chicken IT Team</strong></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- View Ticket Modal -->
+    <div class="modal fade" id="viewTicketModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ticket Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6>Order ID</h6>
+                            <p id="viewOrderId" class="fw-bold"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6>Branch</h6>
+                            <p id="viewBranch"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6>Platform</h6>
+                            <p id="viewPlatform"></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6>Status</h6>
+                            <p id="viewStatus"></p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <h6>Issue Description</h6>
+                            <p id="viewIssue"></p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <h6>Evidence</h6>
+                            <p id="viewEvidence"></p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <h6>Attached Files</h6>
+                            <div id="viewAttachments"></div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <h6>Date Created</h6>
+                            <p id="viewDateCreated"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-timeline">
+                        <h5>Ticket Timeline</h5>
+                        <div class="timeline-item">
+                            <h6>Ticket Created</h6>
+                            <p id="timelineCreated"></p>
+                        </div>
+                        <div class="timeline-item" id="timelineSentItem" style="display: none;">
+                            <h6>Email Sent</h6>
+                            <p id="timelineSent"></p>
+                        </div>
+                        <div class="timeline-item" id="timelineClosedItem" style="display: none;">
+                            <h6>Ticket Closed</h6>
+                            <p id="timelineClosed"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-crispy" id="editFromViewBtn">Edit Ticket</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Ticket Modal -->
+    <div class="modal fade" id="editTicketModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Ticket</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTicketForm">
+                        <input type="hidden" id="editTicketId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editOrderId" class="form-label">Order ID</label>
+                                <input type="text" class="form-control" id="editOrderId" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editBranch" class="form-label">Branch</label>
+                                <select class="form-select" id="editBranch" required>
+                                    <option value="Khaldia">Crispy Chicken Khaldia</option>
+                                    <option value="Muroor">Crispy Chicken Muroor</option>
+                                    <option value="Shabiya11">Crispy Chicken Shabiya 11</option>
+                                    <option value="AlBarsha">Crispy Chicken Al Barsha</option>
+                                    <option value="AlSatwa">Crispy Chicken Al Satwa</option>
+                                    <option value="Electra">Crispy Chicken Electra</option>
+                                    <option value="Hamdan">Crispy Chicken Hamdan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editPlatform" class="form-label">Platform</label>
+                                <select class="form-select" id="editPlatform" required>
+                                    <option value="Noon">Noon</option>
+                                    <option value="Careem">Careem</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editStatus" class="form-label">Status</label>
+                                <select class="form-select" id="editStatus" required>
+                                    <option value="Open">Open</option>
+                                    <option value="Sent">Sent</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="editIssue" class="form-label">Issue Description</label>
+                                <textarea class="form-control" id="editIssue" rows="3" required></textarea>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="editEvidence" class="form-label">Evidence (link or None)</label>
+                                <input type="text" class="form-control" id="editEvidence">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-crispy" id="saveTicketBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="notificationText">Action completed successfully!</span>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Floating Action Button -->
+    <button class="floating-action-btn pulse" id="addTicketFab">
+        <i class="bi bi-plus-lg"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Global variables
+        let tickets = JSON.parse(localStorage.getItem('crispyTickets')) || [];
+        let filteredTickets = [...tickets];
+        let platformChart, branchChart;
+        let currentTicketId = null;
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let uploadedFiles = [];
+        
+        const noonEmails = 'resops@noon.com;foodfinance@noon.com;muismail@noon.com';
+        const careemEmails = 'rashid.waqas@careem.com;partners_uae@careem.com;david.chamas@careem.com';
+        const ccEmails = 'kenawe@crispychicken.rest,mshahin76@yahoo.com';
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Select2
+            $('#branch, #platform, #status, #filterBranch, #filterPlatform, #filterStatus').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option'
+            });
+            
+            renderTickets();
+            updateStats();
+            initCharts();
+            initTheme();
+            initFileUpload();
+            
+            // Form submission
+            document.getElementById('ticketForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addTicket();
+            });
+            
+            // Edit form submission
+            document.getElementById('saveTicketBtn').addEventListener('click', function() {
+                saveEditedTicket();
+            });
+            
+            // Search functionality
+            document.getElementById('searchOrder').addEventListener('input', debounce(function() {
+                applyFilters();
+            }, 300));
+            
+            // Filter change events
+            document.getElementById('filterBranch').addEventListener('change', applyFilters);
+            document.getElementById('filterPlatform').addEventListener('change', applyFilters);
+            document.getElementById('filterStatus').addEventListener('change', applyFilters);
+            
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            
+            // Floating action button
+            document.getElementById('addTicketFab').addEventListener('click', function() {
+                document.getElementById('addTicketCard').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Edit from view button
+            document.getElementById('editFromViewBtn').addEventListener('click', function() {
+                const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewTicketModal'));
+                viewModal.hide();
+                
+                setTimeout(() => {
+                    editTicket(currentTicketId);
+                }, 500);
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + N: New ticket
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                    e.preventDefault();
+                    document.getElementById('addTicketCard').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('orderId').focus();
+                }
+                
+                // Ctrl/Cmd + F: Focus search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    document.getElementById('searchOrder').focus();
+                }
+                
+                // Ctrl/Cmd + D: Toggle dark mode
+                if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+            
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+        
+        // Debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+        
+        // Initialize file upload
+        function initFileUpload() {
+            const fileDropArea = document.getElementById('fileDropArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // Handle dropped files
+            fileDropArea.addEventListener('drop', handleDrop, false);
+            
+            // Handle file selection via input
+            fileInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            // Open file selector when drop area is clicked
+            fileDropArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            function highlight() {
+                fileDropArea.classList.add('drag-over');
+            }
+            
+            function unhighlight() {
+                fileDropArea.classList.remove('drag-over');
+            }
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    uploadedFiles = Array.from(files);
+                    displayFiles();
+                }
+            }
+            
+            function displayFiles() {
+                fileList.innerHTML = '';
+                
+                uploadedFiles.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <span>${file.name} (${formatFileSize(file.size)})</span>
+                        <button type="button" onclick="removeFile(${index})">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            }
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Remove file
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayFiles();
+        }
+        
+        // Initialize theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+        
+        // Toggle theme
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Update charts with new theme
+            updateChartsTheme(newTheme);
+        }
+        
+        // Update theme icon
+        function updateThemeIcon(theme) {
+            const icon = document.querySelector('#themeToggle i');
+            icon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        }
+        
+        // Update charts theme
+        function updateChartsTheme(theme) {
+            const textColor = theme === 'dark' ? '#f8f9fa' : '#333';
+            const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            if (platformChart) {
+                platformChart.options.plugins.legend.labels.color = textColor;
+                platformChart.update();
+            }
+            
+            if (branchChart) {
+                branchChart.options.scales.x.ticks.color = textColor;
+                branchChart.options.scales.y.ticks.color = textColor;
+                branchChart.options.scales.x.grid.color = gridColor;
+                branchChart.options.scales.y.grid.color = gridColor;
+                branchChart.update();
+            }
+        }
+        
+        // Add new ticket
+        function addTicket() {
+            const orderId = document.getElementById('orderId').value;
+            const branch = document.getElementById('branch').value;
+            const platform = document.getElementById('platform').value;
+            const issue = document.getElementById('issue').value;
+            const evidence = document.getElementById('evidence').value;
+            const status = document.getElementById('status').value;
+            
+            const ticket = {
+                id: Date.now(),
+                orderId,
+                branch,
+                platform,
+                issue,
+                evidence,
+                status,
+                dateCreated: new Date().toISOString(),
+                timeline: {
+                    created: new Date().toISOString(),
+                    sent: null,
+                    closed: null
+                },
+                files: uploadedFiles.map(file => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                }))
+            };
+            
+            // Show loading state
+            const submitBtn = document.querySelector('#ticketForm button[type="submit"]');
+            const originalHTML = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Adding Ticket...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                tickets.push(ticket);
+                saveTickets();
+                renderTickets();
+                updateStats();
+                updateCharts();
+                
+                // Reset form
+                document.getElementById('ticketForm').reset();
+                uploadedFiles = [];
+                document.getElementById('fileList').innerHTML = '';
+                
+                // Reset button
+                submitBtn.innerHTML = originalHTML;
+                submitBtn.disabled = false;
+                
+                // Show notification with animation
+                showNotification('Ticket added successfully!');
+                
+                // Play sound (if supported)
+                playSound('add');
+            }, 1000);
+        }
+        
+        // Save tickets to localStorage
+        function saveTickets() {
+            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+        }
+        
+        // Render tickets table
+        function renderTickets() {
+            const tbody = document.querySelector('#ticketsTable tbody');
+            tbody.innerHTML = '';
+            
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedTickets = filteredTickets.slice(startIndex, endIndex);
+            
+            if (paginatedTickets.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <i class="bi bi-inbox fs-1 text-muted"></i>
+                            <p class="mt-2 text-muted">No tickets found</p>
+                        </td>
+                    </tr>
+                `;
+                
+                // Update pagination info
+                document.getElementById('showingFrom').textContent = '0';
+                document.getElementById('showingTo').textContent = '0';
+                document.getElementById('totalRecords').textContent = '0';
+                
+                // Render pagination
+                renderPagination(0);
+                return;
+            }
+            
+            // Show skeleton loading
+            tbody.innerHTML = '';
+            for (let i = 0; i < Math.min(itemsPerPage, 5); i++) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><div class="skeleton skeleton-text"></div></td>
+                    <td><div class="skeleton skeleton-text"></div></td>
+                    <td><div class="skeleton skeleton-text"></div></td>
+                    <td><div class="skeleton skeleton-text"></div></td>
+                    <td><div class="skeleton skeleton-text"></div></td>
+                    <td><div class="skeleton skeleton-text"></div></td>
+                    <td><div class="skeleton skeleton-text"></div></td>
+                    <td><div class="skeleton skeleton-text"></div></td>
+                `;
+                tbody.appendChild(tr);
+            }
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                tbody.innerHTML = '';
+                
+                paginatedTickets.forEach(ticket => {
+                    const tr = document.createElement('tr');
+                    
+                    // Calculate progress based on status
+                    let progress = 0;
+                    if (ticket.status === 'Sent') progress = 50;
+                    if (ticket.status === 'Closed') progress = 100;
+                    
+                    tr.innerHTML = `
+                        <td>${highlightSearch(ticket.orderId)}</td>
+                        <td>${ticket.branch}</td>
+                        <td>${ticket.platform}</td>
+                        <td>${ticket.issue}</td>
+                        <td>${ticket.evidence || 'None'}</td>
+                        <td>
+                            <span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status}</span>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: ${progress}%"></div>
+                            </div>
+                        </td>
+                        <td>${formatDate(ticket.dateCreated)}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewTicket(${ticket.id})" title="View Details" data-bs-toggle="tooltip">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="sendEmail(${ticket.id})" title="Send Email" data-bs-toggle="tooltip">
+                                <i class="bi bi-envelope"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="sendWhatsApp(${ticket.id})" title="Send WhatsApp" data-bs-toggle="tooltip">
+                                <i class="bi bi-whatsapp"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="editTicket(${ticket.id})" title="Edit Ticket" data-bs-toggle="tooltip">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTicket(${ticket.id})" title="Delete Ticket" data-bs-toggle="tooltip">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                // Update pagination info
+                document.getElementById('showingFrom').textContent = filteredTickets.length > 0 ? startIndex + 1 : '0';
+                document.getElementById('showingTo').textContent = Math.min(endIndex, filteredTickets.length);
+                document.getElementById('totalRecords').textContent = filteredTickets.length;
+                
+                // Render pagination
+                renderPagination(filteredTickets.length);
+                
+                // Re-initialize tooltips
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }, 500);
+        }
+        
+        // Render pagination
+        function renderPagination(totalItems) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            if (totalPages <= 1) return;
+            
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>`;
+            pagination.appendChild(prevLi);
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const li = document.createElement('li');
+                    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                    li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                    pagination.appendChild(li);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const li = document.createElement('li');
+                    li.className = 'page-item disabled';
+                    li.innerHTML = `<a class="page-link" href="#">...</a>`;
+                    pagination.appendChild(li);
+                }
+            }
+            
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>`;
+            pagination.appendChild(nextLi);
+        }
+        
+        // Change page
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+            
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            renderTickets();
+            
+            // Scroll to top of table
+            document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Highlight search term
+        function highlightSearch(text) {
+            const searchTerm = document.getElementById('searchOrder').value.toLowerCase();
+            if (!searchTerm) return text;
+            
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const total = tickets.length;
+            const open = tickets.filter(t => t.status === 'Open').length;
+            const sent = tickets.filter(t => t.status === 'Sent').length;
+            const closed = tickets.filter(t => t.status === 'Closed').length;
+            
+            // Animate the numbers
+            animateValue('totalTickets', parseInt(document.getElementById('totalTickets').textContent), total, 1000);
+            animateValue('openTickets', parseInt(document.getElementById('openTickets').textContent), open, 1000);
+            animateValue('sentTickets', parseInt(document.getElementById('sentTickets').textContent), sent, 1000);
+            animateValue('closedTickets', parseInt(document.getElementById('closedTickets').textContent), closed, 1000);
+        }
+        
+        // Animate value
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            const range = end - start;
+            const minTimer = 50;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            stepTime = Math.max(stepTime, minTimer);
+            const startTime = new Date().getTime();
+            const endTime = startTime + duration;
+            
+            function run() {
+                const now = new Date().getTime();
+                const remaining = Math.max((endTime - now) / duration, 0);
+                const value = Math.round(end - (remaining * range));
+                obj.textContent = value;
+                if (value < end) {
+                    requestAnimationFrame(run);
+                }
+            }
+            
+            requestAnimationFrame(run);
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const textColor = theme === 'dark' ? '#f8f9fa' : '#333';
+            const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            // Platform Chart
+            const platformCtx = document.getElementById('platformChart').getContext('2d');
+            platformChart = new Chart(platformCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Noon', 'Careem'],
+                    datasets: [{
+                        data: [
+                            tickets.filter(t => t.platform === 'Noon').length,
+                            tickets.filter(t => t.platform === 'Careem').length
+                        ],
+                        backgroundColor: ['#d32f2f', '#ff9800'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor,
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 16
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+            
+            // Branch Chart
+            const branchCtx = document.getElementById('branchChart').getContext('2d');
+            const branches = [...new Set(tickets.map(t => t.branch))];
+            const branchCounts = branches.map(branch => 
+                tickets.filter(t => t.branch === branch).length
+            );
+            
+            branchChart = new Chart(branchCtx, {
+                type: 'bar',
+                data: {
+                    labels: branches,
+                    datasets: [{
+                        label: 'Tickets',
+                        data: branchCounts,
+                        backgroundColor: '#d32f2f',
+                        borderWidth: 0,
+                        borderRadius: 5,
+                        hoverBackgroundColor: '#b71c1c'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 16
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+        
+        // Update charts
+        function updateCharts() {
+            // Update platform chart
+            platformChart.data.datasets[0].data = [
+                tickets.filter(t => t.platform === 'Noon').length,
+                tickets.filter(t => t.platform === 'Careem').length
+            ];
+            platformChart.update();
+            
+            // Update branch chart
+            const branches = [...new Set(tickets.map(t => t.branch))];
+            const branchCounts = branches.map(branch => 
+                tickets.filter(t => t.branch === branch).length
+            );
+            
+            branchChart.data.labels = branches;
+            branchChart.data.datasets[0].data = branchCounts;
+            branchChart.update();
+        }
+        
+        // Send email
+        function sendEmail(id) {
+            const ticket = tickets.find(t => t.id === id);
+            if (!ticket) return;
+            
+            // Show loading state
+            const btn = event.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="loading-spinner"></span>';
+            btn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                const toEmails = ticket.platform === 'Noon' ? noonEmails : careemEmails;
+                const subject = `${ticket.platform} Claim – Order ${ticket.orderId} (${ticket.branch})`;
+                
+                let body = `Dear ${ticket.platform} Team,%0A%0A`;
+                if (ticket.evidence && ticket.evidence.toLowerCase() !== 'none') {
+                    body += `Regarding the claim for Order ID: ${ticket.orderId} from ${ticket.branch}, after verification with the branch manager, the order was delivered in full and in proper condition.%0A%0AEvidence: ${ticket.evidence}%0A%0AWe request the claim be rejected and the deducted amount refunded to the restaurant's account.%0A%0A`;
+                } else {
+                    body += `Regarding the claim for Order ID: ${ticket.orderId} from ${ticket.branch}, no visual evidence (photo/video) has been provided.%0A%0AClaims without valid evidence cannot be approved.%0A%0AWe request the claim be rejected and the deducted amount refunded to the restaurant's account.%0A%0A`;
+                }
+                body += `Best regards,%0AAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
+                
+                const mailtoLink = `mailto:${toEmails}?cc=${ccEmails}&subject=${subject}&body=${body}`;
+                window.open(mailtoLink, '_blank');
+                
+                // Update ticket status and timeline
+                ticket.status = 'Sent';
+                if (!ticket.timeline) {
+                    ticket.timeline = {
+                        created: ticket.dateCreated,
+                        sent: null,
+                        closed: null
+                    };
+                }
+                ticket.timeline.sent = new Date().toISOString();
+                
+                saveTickets();
+                renderTickets();
+                updateStats();
+                
+                // Reset button
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                
+                showNotification('Email sent successfully!');
+                playSound('send');
+            }, 1000);
+        }
+        
+        // Send WhatsApp
+        function sendWhatsApp(id) {
+            const ticket = tickets.find(t => t.id === id);
+            if (!ticket) return;
+            
+            const branchNumbers = {
+                'Khaldia': '971569494764',
+                'Muroor': '971505414641',
+                'Shabiya11': '971562690688',
+                'AlBarsha': '971567405572',
+                'AlSatwa': '971567970685',
+                'Electra': '971563866859',
+                'Hamdan': '971556886650'
+            };
+            
+            const phone = branchNumbers[ticket.branch] || '';
+            if (!phone) {
+                showNotification('Branch number not found!', 'error');
+                return;
+            }
+            
+            let msg = `🔔 New ${ticket.platform} Claim%nBranch: ${ticket.branch}%nOrder ID: ${ticket.orderId}%nIssue: ${ticket.issue}%n`;
+            if (ticket.evidence && ticket.evidence.toLowerCase() !== 'none') {
+                msg += `Evidence: ${ticket.evidence}%n`;
+            } else {
+                msg += `No evidence provided%n`;
+            }
+            
+            const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(waLink, '_blank');
+            
+            showNotification('WhatsApp message sent successfully!');
+            playSound('send');
+        }
+        
+        // View ticket details
+        function viewTicket(id) {
+            const ticket = tickets.find(t => t.id === id);
+            if (!ticket) return;
+            
+            currentTicketId = id;
+            
+            // Populate modal with ticket data
+            document.getElementById('viewOrderId').textContent = ticket.orderId;
+            document.getElementById('viewBranch').textContent = ticket.branch;
+            document.getElementById('viewPlatform').textContent = ticket.platform;
+            document.getElementById('viewStatus').innerHTML = `<span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status}</span>`;
+            document.getElementById('viewIssue').textContent = ticket.issue;
+            document.getElementById('viewEvidence').textContent = ticket.evidence || 'None';
+            document.getElementById('viewDateCreated').textContent = formatDate(ticket.dateCreated);
+            
+            // Display attachments
+            const attachmentsDiv = document.getElementById('viewAttachments');
+            attachmentsDiv.innerHTML = '';
+            
+            if (ticket.files && ticket.files.length > 0) {
+                ticket.files.forEach(file => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'file-item';
+                    fileDiv.innerHTML = `
+                        <span>${file.name} (${formatFileSize(file.size)})</span>
+                    `;
+                    attachmentsDiv.appendChild(fileDiv);
+                });
+            } else {
+                attachmentsDiv.innerHTML = '<p class="text-muted">No attachments</p>';
+            }
+            
+            // Populate timeline
+            document.getElementById('timelineCreated').textContent = formatDate(ticket.timeline?.created || ticket.dateCreated);
+            
+            if (ticket.timeline?.sent) {
+                document.getElementById('timelineSentItem').style.display = 'block';
+                document.getElementById('timelineSent').textContent = formatDate(ticket.timeline.sent);
+            } else {
+                document.getElementById('timelineSentItem').style.display = 'none';
+            }
+            
+            if (ticket.timeline?.closed) {
+                document.getElementById('timelineClosedItem').style.display = 'block';
+                document.getElementById('timelineClosed').textContent = formatDate(ticket.timeline.closed);
+            } else {
+                document.getElementById('timelineClosedItem').style.display = 'none';
+            }
+            
+            // Show modal
+            const viewModal = new bootstrap.Modal(document.getElementById('viewTicketModal'));
+            viewModal.show();
+        }
+        
+        // Edit ticket
+        function editTicket(id) {
+            const ticket = tickets.find(t => t.id === id);
+            if (!ticket) return;
+            
+            currentTicketId = id;
+            
+            // Populate edit form
+            document.getElementById('editTicketId').value = ticket.id;
+            document.getElementById('editOrderId').value = ticket.orderId;
+            document.getElementById('editBranch').value = ticket.branch;
+            document.getElementById('editPlatform').value = ticket.platform;
+            document.getElementById('editStatus').value = ticket.status;
+            document.getElementById('editIssue').value = ticket.issue;
+            document.getElementById('editEvidence').value = ticket.evidence || '';
+            
+            // Show modal
+            const editModal = new bootstrap.Modal(document.getElementById('editTicketModal'));
+            editModal.show();
+        }
+        
+        // Save edited ticket
+        function saveEditedTicket() {
+            const id = parseInt(document.getElementById('editTicketId').value);
+            const ticket = tickets.find(t => t.id === id);
+            
+            if (!ticket) return;
+            
+            // Show loading state
+            const saveBtn = document.getElementById('saveTicketBtn');
+            const originalHTML = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+            saveBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Update ticket data
+                ticket.orderId = document.getElementById('editOrderId').value;
+                ticket.branch = document.getElementById('editBranch').value;
+                ticket.platform = document.getElementById('editPlatform').value;
+                ticket.status = document.getElementById('editStatus').value;
+                ticket.issue = document.getElementById('editIssue').value;
+                ticket.evidence = document.getElementById('editEvidence').value;
+                
+                // Update timeline if status changed
+                if (!ticket.timeline) {
+                    ticket.timeline = {
+                        created: ticket.dateCreated,
+                        sent: null,
+                        closed: null
+                    };
+                }
+                
+                if (ticket.status === 'Sent' && !ticket.timeline.sent) {
+                    ticket.timeline.sent = new Date().toISOString();
+                }
+                
+                if (ticket.status === 'Closed' && !ticket.timeline.closed) {
+                    ticket.timeline.closed = new Date().toISOString();
+                }
+                
+                saveTickets();
+                renderTickets();
+                updateStats();
+                updateCharts();
+                
+                // Close modal
+                const editModal = bootstrap.Modal.getInstance(document.getElementById('editTicketModal'));
+                editModal.hide();
+                
+                // Reset button
+                saveBtn.innerHTML = originalHTML;
+                saveBtn.disabled = false;
+                
+                showNotification('Ticket updated successfully!');
+                playSound('save');
+            }, 1000);
+        }
+        
+        // Delete ticket
+        function deleteTicket(id) {
+            if (confirm('Are you sure you want to delete this ticket?')) {
+                tickets = tickets.filter(t => t.id !== id);
+                saveTickets();
+                renderTickets();
+                updateStats();
+                updateCharts();
+                
+                showNotification('Ticket deleted successfully!');
+                playSound('delete');
+            }
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            const searchOrder = document.getElementById('searchOrder').value.toLowerCase();
+            const filterBranch = document.getElementById('filterBranch').value;
+            const filterPlatform = document.getElementById('filterPlatform').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+            
+            filteredTickets = tickets.filter(ticket => {
+                const matchOrder = ticket.orderId.toLowerCase().includes(searchOrder);
+                const matchBranch = !filterBranch || ticket.branch === filterBranch;
+                const matchPlatform = !filterPlatform || ticket.platform === filterPlatform;
+                const matchStatus = !filterStatus || ticket.status === filterStatus;
+                
+                return matchOrder && matchBranch && matchPlatform && matchStatus;
+            });
+            
+            // Reset to first page when filters change
+            currentPage = 1;
+            renderTickets();
+        }
+        
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchOrder').value = '';
+            document.getElementById('filterBranch').value = '';
+            document.getElementById('filterPlatform').value = '';
+            document.getElementById('filterStatus').value = '';
+            
+            filteredTickets = [...tickets];
+            currentPage = 1;
+            renderTickets();
+        }
+        
+        // Export to CSV
+        function exportToCSV() {
+            showNotification('Preparing CSV export...', 'info');
+            
+            setTimeout(() => {
+                let csv = 'Order ID,Branch,Platform,Issue,Evidence,Status,Date Created\n';
+                
+                filteredTickets.forEach(ticket => {
+                    csv += `"${ticket.orderId}","${ticket.branch}","${ticket.platform}","${ticket.issue}","${ticket.evidence || ''}","${ticket.status}","${formatDate(ticket.dateCreated)}"\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download', 'crispy_chicken_tickets.csv');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                showNotification('Data exported successfully!');
+                playSound('export');
+            }, 1000);
+        }
+        
+        // Export to PDF
+        function exportToPDF() {
+            showNotification('Preparing PDF export...', 'info');
+            
+            setTimeout(() => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title
+                doc.setFontSize(18);
+                doc.text('Crispy Chicken Delivery Tickets', 105, 15, { align: 'center' });
+                
+                // Add date
+                doc.setFontSize(10);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
+                
+                // Prepare table data
+                const tableData = filteredTickets.map(ticket => [
+                    ticket.orderId,
+                    ticket.branch,
+                    ticket.platform,
+                    ticket.issue,
+                    ticket.evidence || 'None',
+                    ticket.status,
+                    formatDate(ticket.dateCreated)
+                ]);
+                
+                // Add table
+                doc.autoTable({
+                    head: [['Order ID', 'Branch', 'Platform', 'Issue', 'Evidence', 'Status', 'Date Created']],
+                    body: tableData,
+                    startY: 30,
+                    theme: 'grid',
+                    headStyles: { fillColor: [211, 47, 47] },
+                    styles: { fontSize: 8, cellPadding: 3 }
+                });
+                
+                // Save PDF
+                doc.save('crispy_chicken_tickets.pdf');
+                
+                showNotification('PDF exported successfully!');
+                playSound('export');
+            }, 1000);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            
+            if (type === 'error') {
+                notification.style.borderLeftColor = '#dc3545';
+                notification.querySelector('i').className = 'bi bi-exclamation-circle-fill';
+                notification.querySelector('i').style.color = '#dc3545';
+            } else if (type === 'info') {
+                notification.style.borderLeftColor = '#0dcaf0';
+                notification.querySelector('i').className = 'bi bi-info-circle-fill';
+                notification.querySelector('i').style.color = '#0dcaf0';
+            } else {
+                notification.style.borderLeftColor = 'var(--crispy-red)';
+                notification.querySelector('i').className = 'bi bi-check-circle-fill';
+                notification.querySelector('i').style.color = 'var(--crispy-red)';
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Play sound
+        function playSound(action) {
+            // Create audio context
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Create oscillator
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Set different sounds for different actions
+            switch(action) {
+                case 'add':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 523.25; // C5
+                    gainNode.gain.value = 0.3;
+                    break;
+                case 'send':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 659.25; // E5
+                    gainNode.gain.value = 0.3;
+                    break;
+                case 'save':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 783.99; // G5
+                    gainNode.gain.value = 0.3;
+                    break;
+                case 'delete':
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.value = 261.63; // C4
+                    gainNode.gain.value = 0.2;
+                    break;
+                case 'export':
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.value = 440; // A4
+                    gainNode.gain.value = 0.3;
+                    break;
+                default:
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 440; // A4
+                    gainNode.gain.value = 0.3;
+            }
+            
+            // Start and stop the sound
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+    </script>
+</body>
+</html>
