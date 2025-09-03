@@ -1,2038 +1,1888 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crispy Chicken Delivery Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css" rel="stylesheet" />
-    <style>
-        :root {
-            --crispy-red: #d32f2f;
-            --crispy-dark: #b71c1c;
-            --crispy-light: #ffcdd2;
-            --crispy-accent: #ff9800;
-            --bg-light: #f8f9fa;
-            --bg-dark: #212529;
-            --text-light: #333;
-            --text-dark: #f8f9fa;
-        }
-        
-        [data-theme="dark"] {
-            --bg-light: #212529;
-            --bg-dark: #343a40;
-            --text-light: #f8f9fa;
-            --text-dark: #dee2e6;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-light);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, var(--crispy-red) 0%, var(--crispy-dark) 100%);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .navbar-brand i {
-            margin-right: 10px;
-            font-size: 2rem;
-            color: var(--crispy-accent);
-        }
-        
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 20px;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, var(--crispy-red) 0%, var(--crispy-dark) 100%);
-            color: white;
-            font-weight: 600;
-            border-radius: 12px 12px 0 0 !important;
-            padding: 15px 20px;
-        }
-        
-        .btn-crispy {
-            background-color: var(--crispy-red);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-crispy:hover {
-            background-color: var(--crispy-dark);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .btn-outline-crispy {
-            border: 2px solid var(--crispy-red);
-            color: var(--crispy-red);
-            background: transparent;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-outline-crispy:hover {
-            background-color: var(--crispy-red);
-            color: white;
-        }
-        
-        .stats-card {
-            border-left: 5px solid var(--crispy-red);
-            padding-left: 15px;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            transition: all 0.3s ease;
-        }
-        
-        .stats-card:hover {
-            transform: translateX(5px);
-        }
-        
-        .stats-card h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--crispy-red);
-        }
-        
-        .stats-card p {
-            margin: 0;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-        
-        .table {
-            color: var(--text-light);
-        }
-        
-        .table th {
-            background-color: var(--crispy-light);
-            color: var(--crispy-dark);
-            font-weight: 600;
-            border: none;
-        }
-        
-        .table td {
-            vertical-align: middle;
-            border-color: rgba(255,255,255,0.1);
-        }
-        
-        .badge {
-            font-weight: 500;
-            padding: 6px 10px;
-            border-radius: 20px;
-        }
-        
-        .badge-open {
-            background-color: #e3f2fd;
-            color: #0d47a1;
-        }
-        
-        .badge-sent {
-            background-color: #fff8e1;
-            color: #ff8f00;
-        }
-        
-        .badge-closed {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .action-buttons button {
-            margin-right: 5px;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-        
-        .action-buttons button:hover {
-            transform: scale(1.1);
-        }
-        
-        .form-control, .form-select {
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            padding: 10px 15px;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--crispy-red);
-            box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.25);
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-        }
-        
-        .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
-            margin-top: 40px;
-        }
-        
-        .filter-section {
-            background-color: var(--bg-dark);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            color: var(--text-light);
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-bottom: 30px;
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            background-color: white;
-            border-left: 5px solid var(--crispy-red);
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transform: translateX(150%);
-            transition: transform 0.3s ease;
-            max-width: 300px;
-        }
-        
-        [data-theme="dark"] .notification {
-            background-color: #343a40;
-            color: var(--text-light);
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .notification i {
-            margin-right: 10px;
-            color: var(--crispy-red);
-        }
-        
-        .theme-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--crispy-red);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background-color: var(--crispy-dark);
-        }
-        
-        .progress-container {
-            margin-top: 5px;
-            height: 5px;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background-color: var(--crispy-red);
-            border-radius: 5px;
-            transition: width 0.5s ease;
-        }
-        
-        .modal-content {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-        }
-        
-        .modal-header {
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .modal-footer {
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .floating-action-btn {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: var(--crispy-red);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 999;
-            transition: all 0.3s ease;
-        }
-        
-        .floating-action-btn:hover {
-            transform: scale(1.1);
-            background-color: var(--crispy-dark);
-        }
-        
-        .ticket-timeline {
-            position: relative;
-            margin-top: 20px;
-            padding-left: 30px;
-        }
-        
-        .ticket-timeline::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 0;
-            height: 100%;
-            width: 2px;
-            background-color: var(--crispy-light);
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -30px;
-            top: 5px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--crispy-red);
-        }
-        
-        .timeline-item h6 {
-            margin-bottom: 5px;
-            color: var(--crispy-red);
-        }
-        
-        .timeline-item p {
-            margin: 0;
-            font-size: 0.9rem;
-        }
-        
-        .search-highlight {
-            background-color: yellow;
-            color: black;
-            padding: 0 2px;
-            border-radius: 2px;
-        }
-        
-        @media (max-width: 768px) {
-            .stats-card {
-                margin-bottom: 20px;
-            }
-            
-            .action-buttons button {
-                margin-bottom: 5px;
-            }
-            
-            .notification {
-                right: 10px;
-                left: 10px;
-                max-width: none;
-            }
-        }
-        
-        .loading-spinner {
-            display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(211, 47, 47, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
-            }
-        }
-        
-        .select2-container--bootstrap4 .select2-selection--single {
-            height: 38px;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            border: 1px solid #ced4da;
-        }
-        
-        .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
-            color: var(--text-light);
-            line-height: 36px;
-            padding-left: 15px;
-        }
-        
-        .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
-            height: 36px;
-        }
-        
-        .select2-dropdown {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            border: 1px solid #ced4da;
-        }
-        
-        .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
-            background-color: var(--crispy-red);
-            color: white;
-        }
-        
-        .drag-over {
-            border: 2px dashed var(--crispy-red);
-            background-color: rgba(211, 47, 47, 0.1);
-        }
-        
-        .file-drop-area {
-            border: 2px dashed #ced4da;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .file-drop-area:hover {
-            border-color: var(--crispy-red);
-        }
-        
-        .file-drop-area.drag-over {
-            border-color: var(--crispy-red);
-            background-color: rgba(211, 47, 47, 0.1);
-        }
-        
-        .file-input {
-            display: none;
-        }
-        
-        .file-list {
-            margin-top: 10px;
-        }
-        
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            margin-bottom: 5px;
-        }
-        
-        .file-item button {
-            background: none;
-            border: none;
-            color: var(--crispy-red);
-            cursor: pointer;
-        }
-        
-        .skeleton {
-            animation: skeleton-loading 1s linear infinite alternate;
-        }
-        
-        @keyframes skeleton-loading {
-            0% {
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-            100% {
-                background-color: rgba(255, 255, 255, 0.3);
-            }
-        }
-        
-        .skeleton-text {
-            height: 0.8rem;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-        }
-        
-        .skeleton-text:last-child {
-            width: 70%;
-        }
-        
-        .tooltip-inner {
-            background-color: var(--crispy-dark);
-        }
-        
-        .bs-tooltip-auto[x-placement^=top] .arrow::before,
-        .bs-tooltip-top .arrow::before {
-            border-top-color: var(--crispy-dark);
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crispy Chicken — Compensation Tickets Dashboard</title>
+  <!-- CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root{
+      --crispy-red:#d32f2f;
+      --crispy-dark:#b71c1c;
+      --crispy-light:#ffebee;
+      --crispy-accent:#ff7043;
+      --bg:#fafafa;
+      --muted:#6c757d;
+      --card-bg:#ffffff;
+      --text-primary:#212529;
+      --text-secondary:#6c757d;
+      --shadow:0 4px 6px rgba(0,0,0,0.1);
+      --shadow-hover:0 8px 15px rgba(0,0,0,0.2);
+    }
+    html,body{height:100%;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text-primary);direction:ltr;}
+    .navbar{background:linear-gradient(135deg,var(--crispy-red),var(--crispy-dark));box-shadow:0 2px 10px rgba(0,0,0,.12);padding:0.8rem 0;}
+    .navbar .navbar-brand{color:#fff;font-weight:700;font-size:1.3rem;}
+    .container-page{max-width:1400px;margin:20px auto;padding:0 20px;}
+    .card-ghost{background:var(--card-bg);border-radius:16px;padding:24px;box-shadow:var(--shadow);transition:all 0.3s ease;border:1px solid rgba(0,0,0,0.05);}
+    .card-ghost:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+    
+    /* Enhanced Stats */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:30px;}
+    .stat-card{padding:24px;border-radius:16px;background:linear-gradient(135deg,rgba(211,47,47,0.05),rgba(211,47,47,0.1));border-left:6px solid var(--crispy-red);box-shadow:var(--shadow);transition:all 0.3s ease;}
+    .stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);}
+    .stat-card h2{font-size:2.5rem;font-weight:700;margin:10px 0;color:var(--crispy-red);}
+    .stat-card .text-muted{font-size:0.95rem;font-weight:500;letter-spacing:0.5px;}
+    
+    /* Enhanced Platform Cards */
+    .platform-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-bottom:30px;}
+    .platform-card{padding:30px;border-radius:16px;background:linear-gradient(135deg,rgba(255,112,67,0.05),rgba(255,112,67,0.1));text-align:center;box-shadow:var(--shadow);transition:all 0.3s ease;border:1px solid rgba(255,112,67,0.1);}
+    .platform-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);}
+    .platform-card h3{font-size:2.2rem;font-weight:700;margin:15px 0;color:var(--crispy-accent);}
+    .platform-card .percentage{font-size:1.4rem;font-weight:600;color:var(--crispy-accent);margin-top:8px;}
+    
+    /* Enhanced Reports Section */
+    #reports{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:30px;}
+    .report-card{padding:24px;border-radius:16px;background:var(--card-bg);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.05);}
+    .report-card h5{font-size:1.3rem;font-weight:700;margin-bottom:20px;color:var(--text-primary);}
+    .report-card .chart-container{position:relative;height:220px;}
+    
+    /* Enhanced Case Analysis */
+    .case-analysis-section{background:var(--card-bg);border-radius:16px;padding:30px;margin-bottom:30px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.05);}
+    .case-analysis-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+    .case-analysis-header h5{font-size:1.4rem;font-weight:700;margin:0;color:var(--text-primary);}
+    .case-badge{padding:8px 16px;border-radius:24px;font-size:0.9rem;font-weight:600;}
+    .badge-high{background:var(--crispy-light);color:var(--crispy-red);}
+    .badge-medium{background:#fff3e0;color:#ef6c00;}
+    .badge-low{background:#e8f5e9;color:#2e7d32;}
+    
+    .branch-analysis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:24px;}
+    .branch-card{background:#f8f9fa;border-radius:12px;padding:20px;border:1px solid rgba(0,0,0,0.05);}
+    .branch-card h6{font-size:1.1rem;font-weight:700;margin-bottom:15px;color:var(--crispy-dark);}
+    .branch-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+    .branch-stat-item{text-align:center;padding:12px;background:var(--card-bg);border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);}
+    .branch-stat-value{font-size:1.3rem;font-weight:700;color:var(--crispy-red);margin-bottom:4px;}
+    .branch-stat-label{font-size:0.8rem;color:var(--text-secondary);font-weight:500;}
+    
+    .case-reasons{margin-top:20px;}
+    .case-reasons h6{font-size:1rem;font-weight:600;margin-bottom:12px;color:var(--text-primary);}
+    .case-reason-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.05);}
+    .case-reason-item:last-child{border-bottom:none;}
+    .case-reason-info{display:flex;flex-direction:column;align-items:flex-end;}
+    .case-reason-name{font-size:0.95rem;font-weight:500;margin-bottom:4px;}
+    .case-reason-count{font-size:0.85rem;color:var(--text-secondary);}
+    .case-reason-bar{width:100%;height:8px;background:#e9ecef;border-radius:4px;margin-top:6px;overflow:hidden;}
+    .case-reason-progress{height:100%;background:var(--crispy-red);border-radius:4px;}
+    
+    /* Enhanced Tickets Section */
+    .tickets-section{background:var(--card-bg);border-radius:16px;padding:24px;box-shadow:var(--shadow);margin-bottom:30px;border:1px solid rgba(0,0,0,0.05);}
+    .tickets-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+    .tickets-header h5{font-size:1.4rem;font-weight:700;margin:0;color:var(--text-primary);}
+    .tickets-header .filters{display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+    .tickets-header .search-input{min-width:200px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);padding:8px 12px;font-size:0.95rem;}
+    .tickets-header .filter-select{min-width:160px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);font-size:0.95rem;}
+    .tickets-header .action-buttons{display:flex;gap:8px;}
+    .tickets-header .btn{border-radius:8px;font-weight:600;padding:8px 16px;}
+    
+    /* Enhanced Table */
+    .tickets-table{width:100%;border-collapse:collapse;background:var(--card-bg);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+    .tickets-table th{background:linear-gradient(135deg,rgba(211,47,47,0.1),rgba(211,47,47,0.05));color:var(--crispy-dark);font-weight:600;padding:16px 12px;text-align:left;font-size:0.95rem;}
+    .tickets-table td{padding:16px 12px;border-bottom:1px solid rgba(0,0,0,0.05);vertical-align:middle;}
+    .tickets-table tr:last-child td{border-bottom:none;}
+    .tickets-table tr:hover{background:rgba(0,0,0,0.02);}
+    .ticket-order-id{font-weight:700;font-size:1.1rem;color:var(--crispy-dark);}
+    .ticket-issue{max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle;}
+    .issue-expand{background:none;border:none;color:#0d6efd;text-decoration:underline;font-size:0.9rem;cursor:pointer;padding-left:8px;}
+    .ticket-actions{display:flex;flex-wrap:wrap;gap:4px;}
+    .ticket-actions .btn{padding:4px 8px;font-size:0.8rem;border-radius:6px;}
+    
+    /* High compensation highlight */
+    .high-compensation{background-color:rgba(255,235,238,0.5) !important;}
+    
+    /* Enhanced Modal */
+    .modal-content{border-radius:16px;border:none;box-shadow:0 10px 30px rgba(0,0,0,0.15);}
+    .modal-header{background:linear-gradient(135deg,var(--crispy-red),var(--crispy-dark));color:#fff;border-radius:16px 16px 0 0;padding:20px 24px;}
+    .modal-header .modal-title{font-weight:700;font-size:1.3rem;}
+    .modal-body{padding:24px;}
+    .form-label{font-weight:600;font-size:0.95rem;margin-bottom:8px;color:var(--text-primary);}
+    .form-control,.form-select{border-radius:8px;border:1px solid rgba(0,0,0,0.1);padding:10px 14px;font-size:0.95rem;transition:border-color 0.3s;}
+    .form-control:focus,.form-select:focus{border-color:var(--crispy-red);box-shadow:0 0 0 0.2rem rgba(211,47,47,0.12);}
+    .form-check-label{font-size:0.9rem;}
+    .modal-footer{display:flex;justify-content:flex-end;gap:12px;padding:20px 24px;}
+    .modal-footer .btn{border-radius:8px;font-weight:600;padding:10px 20px;}
+    
+    /* Image upload styling */
+    .image-upload-container{border:2px dashed #ddd;border-radius:8px;padding:20px;text-align:center;margin-bottom:16px;position:relative;}
+    .image-upload-container:hover{border-color:var(--crispy-red);background-color:#fafafa;}
+    .image-upload-container input[type="file"]{display:none;}
+    .image-preview{max-width:100%;max-height:200px;margin-top:10px;border-radius:8px;}
+    .short-link-container{margin-top:16px;}
+    .short-link-input{width:100%;border-radius:8px;border:1px solid #ddd;padding:8px 12px;font-size:0.95rem;}
+    .short-link-button{position:absolute;right:20px;top:50%;transform:translateY(-50%);background:var(--crispy-red);color:white;border:none;border-radius:6px;padding:6px 12px;font-size:0.9rem;cursor:pointer;}
+    
+    /* Enhanced Dock */
+    #dock{position:fixed;right:24px;bottom:24px;z-index:2000;display:flex;flex-direction:column;gap:12px;align-items:flex-end;}
+    .dock-toggle{width:56px;height:56px;border-radius:50%;background:var(--crispy-red);color:#fff;border:none;box-shadow:0 8px 26px rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;}
+    .dock-toggle:hover{transform:scale(1.1);box-shadow:0 10px 30px rgba(0,0,0,0.25);}
+    .dock-panel{display:none;flex-direction:column;gap:10px;padding:12px;background:var(--card-bg);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.15);width:200px;}
+    .dock-panel.show{display:flex;animation:slideUp 0.3s ease-out;}
+    @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .dock-panel button{min-width:180px;font-weight:600;border-radius:10px;padding:10px 16px;font-size:0.95rem;transition:all 0.2s;}
+    .dock-panel button:hover{transform:translateX(-4px);}
+    
+    /* Enhanced Notifications */
+    .notification{position:fixed;top:24px;right:24px;padding:16px 20px;border-radius:12px;color:#fff;z-index:3000;display:none;box-shadow:0 6px 20px rgba(0,0,0,0.15);animation:slideIn 0.3s ease-out;}
+    .notification.show{display:block;}
+    .notification.success{background:#198754;}
+    .notification.error{background:#dc3545;}
+    @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    
+    /* Summary Section */
+    .summary-section{background:var(--card-bg);border-radius:16px;padding:30px;margin-bottom:30px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.05);}
+    .summary-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+    .summary-header h5{font-size:1.4rem;font-weight:700;margin:0;color:var(--text-primary);}
+    .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;}
+    .summary-card{background:#f8f9fa;border-radius:12px;padding:20px;border:1px solid rgba(0,0,0,0.05);}
+    .summary-card h6{font-size:1.1rem;font-weight:700;margin-bottom:15px;color:var(--crispy-dark);}
+    .summary-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px;}
+    .metric-item{text-align:center;padding:16px;background:var(--card-bg);border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);}
+    .metric-value{font-size:1.5rem;font-weight:700;color:var(--crispy-red);margin-bottom:4px;}
+    .metric-label{font-size:0.85rem;color:var(--text-secondary);font-weight:500;}
+    .metric-change{font-size:0.8rem;font-weight:600;margin-top:4px;}
+    .metric-change.positive{color:#198754;}
+    .metric-change.negative{color:#dc3545;}
+    .metric-change.neutral{color:#6c757d;}
+    .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;}
+    .mini-chart{height:150px;}
+    
+    /* Daily Branch Summary Modal */
+    .daily-summary-modal .modal-body{max-height:70vh;overflow-y:auto;}
+    .daily-branch-item{border-bottom:1px solid #eee;padding:12px 0;}
+    .daily-branch-item:last-child{border-bottom:none;}
+    .daily-branch-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .daily-branch-name{font-weight:600;}
+    .daily-branch-stats{display:flex;gap:16px;}
+    .daily-stat{text-align:center;}
+    .daily-stat-value{font-weight:700;font-size:1.1rem;}
+    .daily-stat-label{font-size:0.85rem;color:var(--text-secondary);}
+    
+    /* Print styles */
+    @media print{
+      #dock, .tickets-header .btn, .action-buttons, .navbar, .modal, .notification { display:none !important; }
+      body{background:#fff}
+      .card-ghost{box-shadow:none;border:1px solid #ddd;}
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 1200px){
+      .container-page{max-width:100%;padding:0 16px;}
+    }
+    @media (max-width: 992px){
+      #reports{grid-template-columns:1fr;}
+      .branch-analysis-grid{grid-template-columns:1fr;}
+      .branch-stats{grid-template-columns:repeat(2,1fr);}
+      .summary-grid{grid-template-columns:1fr;}
+      .chart-row{grid-template-columns:1fr;}
+    }
+    @media (max-width: 768px){
+      .stats-grid{grid-template-columns:1fr;}
+      .platform-cards{grid-template-columns:1fr;}
+      .tickets-header .filters{flex-direction:column;align-items:stretch;}
+      .tickets-header .search-input,.tickets-header .filter-select{min-width:100%;}
+      .tickets-header .action-buttons{justify-content:stretch;}
+      .tickets-header .action-buttons .btn{flex:1;}
+      .tickets-table{font-size:0.85rem;}
+      .ticket-actions{justify-content:center;}
+      #dock{right:16px;bottom:16px;}
+      .dock-panel{width:180px;}
+      .dock-panel button{min-width:160px;font-size:0.9rem;}
+    }
+    @media (max-width: 576px){
+      .container-page{padding:0 12px;}
+      .card-ghost{padding:16px;}
+      .stat-card h2{font-size:2rem;}
+      .platform-card h3{font-size:1.8rem;}
+      .report-card{padding:16px;}
+      .tickets-table th,.tickets-table td{padding:10px 8px;}
+      .ticket-issue{max-width:150px;}
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-fire"></i>
-                Crispy Chicken Delivery System
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+  <!-- Heatmap container -->
+  <div id="heatmapContainer"></div>
+  
+  <!-- Enhanced Navigation -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container container-page">
+      <a class="navbar-brand" href="#"><i class="bi bi-fire-fill me-2" style="font-size:1.6rem"></i> Crispy Chicken — Compensation Tickets</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-white fw-semibold" href="#">Dashboard</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <main class="container-page">
+    <!-- Enhanced Stats Section -->
+    <section class="stats-grid">
+      <div class="stat-card text-center">
+        <div class="text-muted">Total Cases</div>
+        <h2 id="totalTickets">0</h2>
+      </div>
+      <div class="stat-card text-center" style="border-left-color:#0d6efd;">
+        <div class="text-muted">Open</div>
+        <h2 id="openTickets" style="color:#0d6efd;">0</h2>
+      </div>
+      <div class="stat-card text-center" style="border-left-color:#ffc107;">
+        <div class="text-muted">Sent</div>
+        <h2 id="sentTickets" style="color:#ffc107;">0</h2>
+      </div>
+      <div class="stat-card text-center" style="border-left-color:#198754;">
+        <div class="text-muted">Closed</div>
+        <h2 id="closedTickets" style="color:#198754;">0</h2>
+      </div>
+    </section>
+    
+    <!-- Summary Section -->
+    <section class="summary-section">
+      <div class="summary-header">
+        <h5>Dashboard Summary</h5>
+        <div class="text-muted">
+          <i class="bi bi-calendar3 me-1"></i>
+          <span id="summaryDate"></span>
+        </div>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h6>Financial Overview</h6>
+          <div class="summary-metrics">
+            <div class="metric-item">
+              <div class="metric-value" id="totalOriginalAmount">0</div>
+              <div class="metric-label">Total Original Amount</div>
+              <div class="metric-change" id="originalAmountChange">+0%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="totalCompensation">0</div>
+              <div class="metric-label">Total Compensation</div>
+              <div class="metric-change" id="compensationChange">+0%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="avgCompensation">0</div>
+              <div class="metric-label">Avg. Compensation</div>
+              <div class="metric-change" id="avgCompensationChange">+0%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="compensationRate">0%</div>
+              <div class="metric-label">Compensation Rate</div>
+              <div class="metric-change" id="compensationRateChange">+0%</div>
+            </div>
+          </div>
+          <div class="chart-row">
+            <div class="mini-chart">
+              <canvas id="amountChart"></canvas>
+            </div>
+            <div class="mini-chart">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <h6>Platform Performance</h6>
+          <div class="summary-metrics">
+            <div class="metric-item">
+              <div class="metric-value" id="noonTickets">0</div>
+              <div class="metric-label">Noon Cases</div>
+              <div class="metric-change" id="noonTicketsChange">+0%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="careemTickets">0</div>
+              <div class="metric-label">Careem Cases</div>
+              <div class="metric-change" id="careemTicketsChange">+0%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="noonCompensation">0</div>
+              <div class="metric-label">Noon Compensation</div>
+              <div class="metric-change" id="noonCompensationChange">+0%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="careemCompensation">0</div>
+              <div class="metric-label">Careem Compensation</div>
+              <div class="metric-change" id="careemCompensationChange">+0%</div>
+            </div>
+          </div>
+          <div class="chart-row">
+            <div class="mini-chart">
+              <canvas id="platformTicketsChart"></canvas>
+            </div>
+            <div class="mini-chart">
+              <canvas id="platformCompensationChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <h6>Branch Performance</h6>
+          <div class="summary-metrics">
+            <div class="metric-item">
+              <div class="metric-value" id="topBranch">-</div>
+              <div class="metric-label">Top Branch</div>
+              <div class="metric-change" id="topBranchCases">0 cases</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="topCase">-</div>
+              <div class="metric-label">Top Case</div>
+              <div class="metric-change" id="topCaseCount">0 cases</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="caseRate">0%</div>
+              <div class="metric-label">Case Rate</div>
+              <div class="metric-change" id="caseRateChange">+0%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-value" id="avgOriginalAmount">0</div>
+              <div class="metric-label">Avg. Original Amount</div>
+              <div class="metric-change" id="avgOriginalAmountChange">+0%</div>
+            </div>
+          </div>
+          <div class="chart-row">
+            <div class="mini-chart">
+              <canvas id="branchCasesChart"></canvas>
+            </div>
+            <div class="mini-chart">
+              <canvas id="caseTypesChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Enhanced Platform Cards -->
+    <section class="platform-cards">
+      <div class="platform-card">
+        <div class="text-muted">Noon Cases</div>
+        <h3 id="noonCount">0</h3>
+        <div class="percentage" id="noonPercentage">0%</div>
+      </div>
+      <div class="platform-card">
+        <div class="text-muted">Careem Cases</div>
+        <h3 id="careemCount">0</h3>
+        <div class="percentage" id="careemPercentage">0%</div>
+      </div>
+    </section>
+    
+    <!-- Enhanced Reports Section -->
+    <section id="reports">
+      <div class="report-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5>Top Branches by Cases</h5>
+          <small class="text-muted" id="topBranchLabel"></small>
+        </div>
+        <div class="chart-container">
+          <canvas id="branchChart"></canvas>
+        </div>
+      </div>
+      <div class="report-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5>Case Types Breakdown</h5>
+          <small class="text-muted" id="topCaseLabel"></small>
+        </div>
+        <div class="chart-container">
+          <canvas id="caseChart"></canvas>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Enhanced Case Analysis Section -->
+    <section class="case-analysis-section">
+      <div class="case-analysis-header">
+        <h5>Case Analysis Causing Compensation</h5>
+        <div id="caseAnalysisBadge" class="case-badge badge-high">High Level</div>
+      </div>
+      <div id="branchAnalysisContainer"></div>
+    </section>
+    
+    <!-- Enhanced Tickets Section -->
+    <section class="tickets-section">
+      <div class="tickets-header">
+        <h5>Compensation Cases</h5>
+        <div class="filters">
+          <input id="searchInput" class="form-control search-input" placeholder="Search case / branch / issue" />
+          <select id="filterBranch" class="form-select filter-select">
+            <option value="">All Branches</option>
+          </select>
+          <select id="filterPlatform" class="form-select filter-select">
+            <option value="">All Platforms</option>
+            <option>Noon</option>
+            <option>Careem</option>
+          </select>
+          <div class="action-buttons">
+            <button class="btn btn-primary" onclick="openAddModal()">
+              <i class="bi bi-plus-circle me-1"></i> Add
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-list-task"></i> Tickets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-graph-up"></i> Reports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-gear"></i> Settings</a>
-                    </li>
-                </ul>
-            </div>
+            <button class="btn btn-outline-secondary" onclick="addSample()">
+              <i class="bi bi-flask me-1"></i> Sample
+            </button>
+          </div>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container my-4">
-        <!-- Stats Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="card-body">
-                        <h3 id="totalTickets">0</h3>
-                        <p>Total Tickets</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="card-body">
-                        <h3 id="openTickets">0</h3>
-                        <p>Open Tickets</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="card-body">
-                        <h3 id="sentTickets">0</h3>
-                        <p>Sent Tickets</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stats-card">
-                    <div class="card-body">
-                        <h3 id="closedTickets">0</h3>
-                        <p>Closed Tickets</p>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div id="ticketsContainer"></div>
+    </section>
+  </main>
+  
+  <!-- Enhanced Modal -->
+  <div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Add Compensation Case</h5>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-
-        <!-- Charts Section -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Tickets by Platform</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-container">
-                            <canvas id="platformChart"></canvas>
-                        </div>
-                    </div>
+        <div class="modal-body">
+          <form id="ticketForm">
+            <input type="hidden" id="editingId" />
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Order ID</label>
+                <input id="f_orderId" class="form-control" required>
+                <div id="duplicateWarning" class="duplicate-warning text-danger mt-1"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Order Date & Time</label>
+                <input id="f_orderDate" type="datetime-local" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Branch</label>
+                <select id="f_branch" class="form-select" required>
+                  <option value="">Select Branch</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Platform</label>
+                <select id="f_platform" class="form-select" required>
+                  <option value="">Select Platform</option>
+                  <option>Noon</option>
+                  <option>Careem</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Case Description</label>
+                <textarea id="f_issue" class="form-control autogrow" required></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Original Amount (AED)</label>
+                <input id="f_originalAmount" type="number" min="0" step="0.01" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Compensation (AED)</label>
+                <input id="f_compensation" type="number" min="0" step="0.01" class="form-control" required>
+              </div>
+              
+              <!-- Evidence Section -->
+              <div class="col-12">
+                <label class="form-label">Evidence</label>
+                <div class="image-upload-container" onclick="document.getElementById('f_evidenceImage').click()">
+                  <i class="bi bi-cloud-upload" style="font-size:2rem;color:#ccc"></i>
+                  <p class="mb-0 mt-2">Click to upload image</p>
+                  <input type="file" id="f_evidenceImage" accept="image/*" onchange="handleImageUpload(event)">
+                  <img id="imagePreview" class="image-preview" style="display:none">
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Tickets by Branch</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-container">
-                            <canvas id="branchChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add New Ticket Form -->
-        <div class="card mb-4" id="addTicketCard">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Ticket</h5>
-            </div>
-            <div class="card-body">
-                <form id="ticketForm">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="orderId" class="form-label">Order ID</label>
-                            <input type="text" class="form-control" id="orderId" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="branch" class="form-label">Branch</label>
-                            <select class="form-select" id="branch" required>
-                                <option value="">Select Branch</option>
-                                <option value="Khaldia">Crispy Chicken Khaldia</option>
-                                <option value="Muroor">Crispy Chicken Muroor</option>
-                                <option value="Shabiya11">Crispy Chicken Shabiya 11</option>
-                                <option value="AlBarsha">Crispy Chicken Al Barsha</option>
-                                <option value="AlSatwa">Crispy Chicken Al Satwa</option>
-                                <option value="Electra">Crispy Chicken Electra</option>
-                                <option value="Hamdan">Crispy Chicken Hamdan</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="platform" class="form-label">Platform</label>
-                            <select class="form-select" id="platform" required>
-                                <option value="">Select Platform</option>
-                                <option value="Noon">Noon</option>
-                                <option value="Careem">Careem</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" required>
-                                <option value="Open">Open</option>
-                                <option value="Sent">Sent</option>
-                                <option value="Closed">Closed</option>
-                            </select>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="issue" class="form-label">Issue Description</label>
-                            <textarea class="form-control" id="issue" rows="2" required></textarea>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="evidence" class="form-label">Evidence (link or None)</label>
-                            <input type="text" class="form-control" id="evidence">
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Attach Files</label>
-                            <div class="file-drop-area" id="fileDropArea">
-                                <i class="bi bi-cloud-arrow-up fs-1 text-muted"></i>
-                                <p class="mb-0">Drag & drop files here or click to browse</p>
-                                <input type="file" class="file-input" id="fileInput" multiple>
-                                <div class="file-list" id="fileList"></div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-crispy">
-                                <i class="bi bi-plus-circle"></i> Add Ticket
-                            </button>
-                            <button type="reset" class="btn btn-outline-secondary ms-2">
-                                <i class="bi bi-arrow-clockwise"></i> Reset Form
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="filter-section">
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="searchOrder" class="form-label">Search Order ID</label>
-                    <input type="text" class="form-control" id="searchOrder" placeholder="Enter Order ID">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="filterBranch" class="form-label">Filter by Branch</label>
-                    <select class="form-select" id="filterBranch">
-                        <option value="">All Branches</option>
-                        <option value="Khaldia">Crispy Chicken Khaldia</option>
-                        <option value="Muroor">Crispy Chicken Muroor</option>
-                        <option value="Shabiya11">Crispy Chicken Shabiya 11</option>
-                        <option value="AlBarsha">Crispy Chicken Al Barsha</option>
-                        <option value="AlSatwa">Crispy Chicken Al Satwa</option>
-                        <option value="Electra">Crispy Chicken Electra</option>
-                        <option value="Hamdan">Crispy Chicken Hamdan</option>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="filterPlatform" class="form-label">Filter by Platform</label>
-                    <select class="form-select" id="filterPlatform">
-                        <option value="">All Platforms</option>
-                        <option value="Noon">Noon</option>
-                        <option value="Careem">Careem</option>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="filterStatus" class="form-label">Filter by Status</label>
-                    <select class="form-select" id="filterStatus">
-                        <option value="">All Statuses</option>
-                        <option value="Open">Open</option>
-                        <option value="Sent">Sent</option>
-                        <option value="Closed">Closed</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <button class="btn btn-crispy" onclick="applyFilters()">
-                        <i class="bi bi-funnel"></i> Apply Filters
+                
+                <div class="short-link-container">
+                  <label class="form-label">Short Link</label>
+                  <div style="position:relative;">
+                    <input id="f_shortLink" type="text" class="form-control short-link-input" placeholder="Click 'Generate' to create short link" readonly>
+                    <button type="button" class="short-link-button" onclick="generateShortLink()">
+                      <i class="bi bi-link-45deg"></i> Generate
                     </button>
-                    <button class="btn btn-outline-secondary ms-2" onclick="resetFilters()">
-                        <i class="bi bi-x-circle"></i> Reset Filters
-                    </button>
-                    <button class="btn btn-outline-crispy ms-2" onclick="exportToCSV()">
-                        <i class="bi bi-download"></i> Export to CSV
-                    </button>
-                    <button class="btn btn-outline-info ms-2" onclick="exportToPDF()">
-                        <i class="bi bi-file-earmark-pdf"></i> Export to PDF
-                    </button>
+                  </div>
                 </div>
+                
+                <div class="form-check mt-2">
+                  <input id="f_noEvidence" type="checkbox" class="form-check-input">
+                  <label class="form-check-label" for="f_noEvidence">No evidence</label>
+                </div>
+              </div>
+              
+              <div class="col-12 mt-3 d-flex gap-2 justify-content-end">
+                <button type="submit" class="btn btn-danger">Save</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              </div>
             </div>
+          </form>
         </div>
-
-        <!-- Tickets Table -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-list-task"></i> Delivery Tickets</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover" id="ticketsTable">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Branch</th>
-                                <th>Platform</th>
-                                <th>Issue</th>
-                                <th>Evidence</th>
-                                <th>Status</th>
-                                <th>Date Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div class="text-muted">
-                        Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalRecords">0</span> entries
-                    </div>
-                    <div class="pagination" id="pagination"></div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <p>&copy; 2023 Crispy Chicken Delivery Management System. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-end">
-                    <p>Developed by <strong>Crispy Chicken IT Team</strong></p>
-                </div>
-            </div>
+  </div>
+  
+  <!-- Issue Modal -->
+  <div class="modal fade" id="issueModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Case Details</h5>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-    </footer>
-
-    <!-- View Ticket Modal -->
-    <div class="modal fade" id="viewTicketModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ticket Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <h6>Order ID</h6>
-                            <p id="viewOrderId" class="fw-bold"></p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <h6>Branch</h6>
-                            <p id="viewBranch"></p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <h6>Platform</h6>
-                            <p id="viewPlatform"></p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <h6>Status</h6>
-                            <p id="viewStatus"></p>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <h6>Issue Description</h6>
-                            <p id="viewIssue"></p>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <h6>Evidence</h6>
-                            <p id="viewEvidence"></p>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <h6>Attached Files</h6>
-                            <div id="viewAttachments"></div>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <h6>Date Created</h6>
-                            <p id="viewDateCreated"></p>
-                        </div>
-                    </div>
-                    
-                    <div class="ticket-timeline">
-                        <h5>Ticket Timeline</h5>
-                        <div class="timeline-item">
-                            <h6>Ticket Created</h6>
-                            <p id="timelineCreated"></p>
-                        </div>
-                        <div class="timeline-item" id="timelineSentItem" style="display: none;">
-                            <h6>Email Sent</h6>
-                            <p id="timelineSent"></p>
-                        </div>
-                        <div class="timeline-item" id="timelineClosedItem" style="display: none;">
-                            <h6>Ticket Closed</h6>
-                            <p id="timelineClosed"></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-crispy" id="editFromViewBtn">Edit Ticket</button>
-                </div>
-            </div>
+        <div class="modal-body">
+          <div id="issueText" style="white-space:pre-wrap;"></div>
         </div>
+      </div>
     </div>
-
-    <!-- Edit Ticket Modal -->
-    <div class="modal fade" id="editTicketModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Ticket</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editTicketForm">
-                        <input type="hidden" id="editTicketId">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editOrderId" class="form-label">Order ID</label>
-                                <input type="text" class="form-control" id="editOrderId" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editBranch" class="form-label">Branch</label>
-                                <select class="form-select" id="editBranch" required>
-                                    <option value="Khaldia">Crispy Chicken Khaldia</option>
-                                    <option value="Muroor">Crispy Chicken Muroor</option>
-                                    <option value="Shabiya11">Crispy Chicken Shabiya 11</option>
-                                    <option value="AlBarsha">Crispy Chicken Al Barsha</option>
-                                    <option value="AlSatwa">Crispy Chicken Al Satwa</option>
-                                    <option value="Electra">Crispy Chicken Electra</option>
-                                    <option value="Hamdan">Crispy Chicken Hamdan</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editPlatform" class="form-label">Platform</label>
-                                <select class="form-select" id="editPlatform" required>
-                                    <option value="Noon">Noon</option>
-                                    <option value="Careem">Careem</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editStatus" class="form-label">Status</label>
-                                <select class="form-select" id="editStatus" required>
-                                    <option value="Open">Open</option>
-                                    <option value="Sent">Sent</option>
-                                    <option value="Closed">Closed</option>
-                                </select>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="editIssue" class="form-label">Issue Description</label>
-                                <textarea class="form-control" id="editIssue" rows="3" required></textarea>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="editEvidence" class="form-label">Evidence (link or None)</label>
-                                <input type="text" class="form-control" id="editEvidence">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-crispy" id="saveTicketBtn">Save Changes</button>
-                </div>
-            </div>
+  </div>
+  
+  <!-- Daily Branch Summary Modal -->
+  <div class="modal fade" id="dailySummaryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Daily Branch Summary</h5>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
+        <div class="modal-body daily-summary-modal">
+          <div id="dailySummaryContent"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="exportDailySummary()">Export Summary</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
-
-    <!-- Notification -->
-    <div id="notification" class="notification">
-        <i class="bi bi-check-circle-fill"></i>
-        <span id="notificationText">Action completed successfully!</span>
+  </div>
+  
+  <!-- Enhanced Notification -->
+  <div id="notification" class="notification"></div>
+  
+  <!-- Enhanced Dock -->
+  <div id="dock" title="Drag me">
+    <div id="dockPanel" class="dock-panel" role="toolbar" aria-hidden="true">
+      <button class="btn btn-danger" onclick="openAddModal()" title="New Case">
+        <i class="bi bi-plus-circle me-1"></i> New Case
+      </button>
+      <button class="btn btn-outline-primary" onclick="addSample()" title="Add sample cases">
+        <i class="bi bi-flask me-1"></i> Add Sample
+      </button>
+      <button class="btn btn-outline-secondary" onclick="showDailySummary()" title="Daily branch summary">
+        <i class="bi bi-calendar-day me-1"></i> Daily Summary
+      </button>
+      <button class="btn btn-outline-secondary" onclick="resetAll()" title="Reset all data">
+        <i class="bi bi-arrow-clockwise me-1"></i> Reset
+      </button>
+      <button class="btn btn-outline-dark" onclick="printReport()" title="Print report">
+        <i class="bi bi-printer me-1"></i> Print
+      </button>
+      <button class="btn btn-success" onclick="exportExcel()" title="Export Excel (XLSX)">
+        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Excel
+      </button>
+      <button class="btn btn-warning" onclick="exportPDF()" title="Export PDF">
+        <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
+      </button>
+      <button class="btn btn-primary" onclick="exportDashboardSummary()" title="Dashboard Summary PDF">
+        <i class="bi bi-file-text me-1"></i> Dashboard PDF
+      </button>
+      <button id="heatmapToggleBtn" class="btn btn-outline-danger" onclick="toggleHeatmap()" title="Toggle Heatmap">
+        <i class="bi bi-activity me-1"></i> Heatmap
+      </button>
+      <button class="btn btn-outline-secondary" onclick="exportUsabilityLog()" title="Export user interactions">
+        <i class="bi bi-box-arrow-up-right me-1"></i> Export Log
+      </button>
     </div>
-
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" id="themeToggle">
-        <i class="bi bi-moon-fill"></i>
+    <button id="dockToggle" class="dock-toggle" title="Open actions">
+      <i class="bi bi-gear-fill"></i>
     </button>
-
-    <!-- Floating Action Button -->
-    <button class="floating-action-btn pulse" id="addTicketFab">
-        <i class="bi bi-plus-lg"></i>
-    </button>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <script>
-        // Global variables
-        let tickets = JSON.parse(localStorage.getItem('crispyTickets')) || [];
-        let filteredTickets = [...tickets];
-        let platformChart, branchChart;
-        let currentTicketId = null;
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        let uploadedFiles = [];
+  </div>
+  
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heatmapjs@2.0.5/heatmap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.js"></script>
+  <script>
+  // ===== State & initial data =====
+  let tickets = JSON.parse(localStorage.getItem('crispyTickets')) || [];
+  const branchWhats = {
+    "Crispy Chicken Khalidiya":"971569494764",
+    "Crispy Chicken Muroor":"971505414641",
+    "Crispy Chicken Shabiya 11":"971562690688",
+    "Crispy Chicken Al Barsha":"971569659524",
+    "Crispy Chicken Al Satwa":"971567970685",
+    "Crispy Chicken Electra":"971563866859",
+    "Crispy Chicken Hamdan":"971556886650",
+    "Crispy Chicken-Al Khalidiya":"971569494764"
+  };
+  const branchesList = Object.keys(branchWhats);
+  
+  // ===== DOM refs =====
+  const ticketsContainer = document.getElementById('ticketsContainer');
+  const searchInput = document.getElementById('searchInput');
+  const filterBranch = document.getElementById('filterBranch');
+  const filterPlatform = document.getElementById('filterPlatform');
+  const notification = document.getElementById('notification');
+  const dockToggle = document.getElementById('dockToggle');
+  const dockPanel = document.getElementById('dockPanel');
+  const dock = document.getElementById('dock');
+  const heatmapContainer = document.getElementById('heatmapContainer');
+  
+  // Charts
+  let branchChart = null, caseChart = null;
+  let amountChart = null, statusChart = null;
+  let platformTicketsChart = null, platformCompensationChart = null;
+  let branchCasesChart = null, caseTypesChart = null;
+  
+  // Heatmap
+  let heatmapInstance = null;
+  let heatmapVisible = false;
+  const interactions = [];
+  
+  // Init setup
+  document.addEventListener('DOMContentLoaded', () => {
+    populateBranchFilters();
+    if (tickets.length === 0) addSample(); // seed
+    renderAll();
+    setupListeners();
+    initHeatmap();
+    updateSummaryDate();
+  });
+  
+  // ===== Populate branch selects =====
+  function populateBranchFilters() {
+    // branch select in filters and modal
+    filterBranch.innerHTML = '<option value="">All Branches</option>';
+    const fBranch = document.getElementById('f_branch');
+    fBranch.innerHTML = '<option value="">Select Branch</option>';
+    branchesList.forEach(b => {
+      const opt1 = document.createElement('option'); opt1.value = b; opt1.textContent = b; filterBranch.appendChild(opt1);
+      const opt2 = document.createElement('option'); opt2.value = b; opt2.textContent = b; fBranch.appendChild(opt2);
+    });
+  }
+  
+  // ===== Utility =====
+  function save() {
+    localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+  }
+  
+  function showNotif(msg, type = 'success') {
+    notification.className = `notification ${type} show`;
+    notification.textContent = msg;
+    setTimeout(() => { notification.className = `notification ${type}`; }, 3000);
+  }
+  
+  function formatDateISO(dt) {
+    if (!dt) return '';
+    const d = new Date(dt);
+    return d.toLocaleString();
+  }
+  
+  function updateSummaryDate() {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+    document.getElementById('summaryDate').textContent = now.toLocaleDateString('en-US', options);
+  }
+  
+  // ===== Generate Short Link =====
+  function generateShortLink() {
+    const ticketId = Date.now().toString();
+    const shortLink = `https://crispy.ch/t/${ticketId.slice(-6)}`;
+    document.getElementById('f_shortLink').value = shortLink;
+    showNotif('Short link generated', 'success');
+  }
+  
+  // ===== Handle Image Upload =====
+  function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('imagePreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
         
-        const noonEmails = 'resops@noon.com;foodfinance@noon.com;muismail@noon.com';
-        const careemEmails = 'rashid.waqas@careem.com;partners_uae@careem.com;david.chamas@careem.com';
-        const ccEmails = 'kenawe@crispychicken.rest,mshahin76@yahoo.com';
+        // Store base64 data in a hidden field
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = 'f_evidenceBase64';
+        hiddenInput.value = e.target.result;
+        document.getElementById('ticketForm').appendChild(hiddenInput);
         
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Select2
-            $('#branch, #platform, #status, #filterBranch, #filterPlatform, #filterStatus').select2({
-                theme: 'bootstrap4',
-                placeholder: 'Select an option'
-            });
-            
-            renderTickets();
-            updateStats();
-            initCharts();
-            initTheme();
-            initFileUpload();
-            
-            // Form submission
-            document.getElementById('ticketForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                addTicket();
-            });
-            
-            // Edit form submission
-            document.getElementById('saveTicketBtn').addEventListener('click', function() {
-                saveEditedTicket();
-            });
-            
-            // Search functionality
-            document.getElementById('searchOrder').addEventListener('input', debounce(function() {
-                applyFilters();
-            }, 300));
-            
-            // Filter change events
-            document.getElementById('filterBranch').addEventListener('change', applyFilters);
-            document.getElementById('filterPlatform').addEventListener('change', applyFilters);
-            document.getElementById('filterStatus').addEventListener('change', applyFilters);
-            
-            // Theme toggle
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            
-            // Floating action button
-            document.getElementById('addTicketFab').addEventListener('click', function() {
-                document.getElementById('addTicketCard').scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            // Edit from view button
-            document.getElementById('editFromViewBtn').addEventListener('click', function() {
-                const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewTicketModal'));
-                viewModal.hide();
-                
-                setTimeout(() => {
-                    editTicket(currentTicketId);
-                }, 500);
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Ctrl/Cmd + N: New ticket
-                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                    e.preventDefault();
-                    document.getElementById('addTicketCard').scrollIntoView({ behavior: 'smooth' });
-                    document.getElementById('orderId').focus();
-                }
-                
-                // Ctrl/Cmd + F: Focus search
-                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                    e.preventDefault();
-                    document.getElementById('searchOrder').focus();
-                }
-                
-                // Ctrl/Cmd + D: Toggle dark mode
-                if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                    e.preventDefault();
-                    toggleTheme();
-                }
-            });
-            
-            // Initialize tooltips
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        });
-        
-        // Debounce function
-        function debounce(func, wait) {
-            let timeout;
-            return function() {
-                const context = this;
-                const args = arguments;
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    func.apply(context, args);
-                }, wait);
-            };
+        showNotif('Image uploaded successfully', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  // ===== Show Daily Summary =====
+  function showDailySummary() {
+    const today = new Date().toISOString().split('T')[0];
+    const todayTickets = tickets.filter(t => t.orderDate.startsWith(today));
+    
+    // Group by branch
+    const branchSummary = {};
+    todayTickets.forEach(ticket => {
+      if (!branchSummary[ticket.branch]) {
+        branchSummary[ticket.branch] = {
+          totalCases: 0,
+          totalCompensation: 0,
+          cases: []
+        };
+      }
+      branchSummary[ticket.branch].totalCases++;
+      branchSummary[ticket.branch].totalCompensation += ticket.compensation || 0;
+      branchSummary[ticket.branch].cases.push(ticket);
+    });
+    
+    // Generate HTML for daily summary
+    let html = '';
+    Object.keys(branchSummary).forEach(branch => {
+      const summary = branchSummary[branch];
+      html += `
+        <div class="daily-branch-item">
+          <div class="daily-branch-header">
+            <div class="daily-branch-name">${branch}</div>
+            <div class="daily-branch-stats">
+              <div class="daily-stat">
+                <div class="daily-stat-value">${summary.totalCases}</div>
+                <div class="daily-stat-label">Cases</div>
+              </div>
+              <div class="daily-stat">
+                <div class="daily-stat-value">AED ${summary.totalCompensation.toFixed(2)}</div>
+                <div class="daily-stat-label">Compensation</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3">
+            <h6 class="mb-2">Cases:</h6>
+            <ul class="list-group">
+      `;
+      
+      summary.cases.forEach(ticket => {
+        const compensationClass = ticket.compensation > 25 ? 'list-group-item-danger' : '';
+        html += `
+          <li class="list-group-item ${compensationClass} d-flex justify-content-between align-items-center">
+            <div>
+              <strong>${ticket.orderId}</strong> - ${ticket.issue.substring(0, 50)}...
+              <div class="text-muted small">Original: AED ${ticket.originalAmount || 0} | Compensation: AED ${ticket.compensation || 0}</div>
+            </div>
+            <div>
+              <span class="badge bg-${ticket.status === 'Open' ? 'primary' : ticket.status === 'Sent' ? 'warning' : 'success'}">${ticket.status}</span>
+            </div>
+          </li>
+        `;
+      });
+      
+      html += `
+            </ul>
+          </div>
+        </div>
+      `;
+    });
+    
+    document.getElementById('dailySummaryContent').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('dailySummaryModal')).show();
+  }
+  
+  // ===== Export Daily Summary =====
+  function exportDailySummary() {
+    const content = document.getElementById('dailySummaryContent').innerHTML;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Daily Branch Summary</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            .daily-branch-item { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+            .daily-branch-name { font-weight: bold; font-size: 1.2rem; }
+            .daily-stat { text-align: center; }
+            .daily-stat-value { font-weight: bold; font-size: 1.1rem; }
+            .list-group-item-danger { background-color: #ffebee; }
+          </style>
+        </head>
+        <body>
+          <h1>Daily Branch Summary</h1>
+          <p>Generated on: ${new Date().toLocaleString()}</p>
+          ${content}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  }
+  
+  // ===== Render =====
+  function renderAll() {
+    renderTickets();
+    updateStats();
+    updatePlatformStats();
+    renderCharts();
+    renderCaseAnalysis();
+    renderSummary();
+  }
+  
+  function filteredTickets() {
+    const q = searchInput.value.trim().toLowerCase();
+    const b = filterBranch.value;
+    const p = filterPlatform.value;
+    return tickets.filter(t => {
+      if (b && t.branch !== b) return false;
+      if (p && t.platform !== p) return false;
+      if (!q) return true;
+      return (t.orderId || '').toString().toLowerCase().includes(q) ||
+             (t.branch || '').toLowerCase().includes(q) ||
+             (t.issue || '').toLowerCase().includes(q);
+    });
+  }
+  
+  function renderTickets() {
+    const data = filteredTickets();
+    if (data.length === 0) {
+      ticketsContainer.innerHTML = `
+        <div class="text-center p-5 empty-state">
+          <i class="bi bi-inbox" style="font-size:48px;color:#ddd"></i>
+          <h5 class="mt-3">No cases found</h5>
+          <p class="text-muted">Add a new compensation case to get started</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = `
+      <div class="table-responsive">
+        <table class="tickets-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Order Date</th>
+              <th>Branch</th>
+              <th>Platform</th>
+              <th>Case</th>
+              <th>Evidence</th>
+              <th>Status</th>
+              <th>Original Amount</th>
+              <th>Compensation</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+    
+    data.forEach(t => {
+      const evidenceHtml = t.evidence && t.evidence !== 'None' 
+        ? `<a href="${t.evidence}" target="_blank" class="text-primary">link</a>` 
+        : `<span class="text-muted">No evidence</span>`;
+      
+      const caseShort = `<span class="ticket-issue">${escapeHtml(t.issue)}</span>
+        <button class="issue-expand" onclick="openIssueModal('${t.id}')">View</button>`;
+      
+      const statusBadge = t.status === 'Open' 
+        ? '<span class="badge bg-primary">Open</span>' 
+        : t.status === 'Sent' 
+          ? '<span class="badge bg-warning">Sent</span>' 
+          : '<span class="badge bg-success">Closed</span>';
+      
+      // Add highlight class for high compensation
+      const rowClass = t.compensation > 25 ? 'high-compensation' : '';
+      
+      html += `
+        <tr class="${rowClass}">
+          <td><span class="ticket-order-id">${t.orderId}</span></td>
+          <td>${formatDateISO(t.orderDate)}</td>
+          <td>${t.branch}</td>
+          <td>${t.platform}</td>
+          <td>${caseShort}</td>
+          <td>${evidenceHtml}</td>
+          <td>${statusBadge}</td>
+          <td>AED ${Number(t.originalAmount || 0).toFixed(2)}</td>
+          <td>AED ${Number(t.compensation || 0).toFixed(2)}</td>
+          <td>
+            <div class="ticket-actions">
+              <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="editTicket('${t.id}')">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-info" title="Email" onclick="sendEmail('${t.id}')">
+                <i class="bi bi-envelope"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-success" title="WhatsApp" onclick="sendWhatsApp('${t.id}')">
+                <i class="bi bi-whatsapp"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" title="Copy" onclick="copyTicket('${t.id}')">
+                <i class="bi bi-clipboard"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" title="Close" onclick="closeTicket('${t.id}')">
+                <i class="bi bi-check2-circle"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+    
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+    
+    ticketsContainer.innerHTML = html;
+  }
+  
+  // ===== Stats & Platforms =====
+  function updateStats() {
+    document.getElementById('totalTickets').textContent = tickets.length;
+    document.getElementById('openTickets').textContent = tickets.filter(t => t.status === 'Open').length;
+    document.getElementById('sentTickets').textContent = tickets.filter(t => t.status === 'Sent').length;
+    document.getElementById('closedTickets').textContent = tickets.filter(t => t.status === 'Closed').length;
+  }
+  
+  function updatePlatformStats() {
+    const total = Math.max(1, tickets.length);
+    const noon = tickets.filter(t => t.platform === 'Noon').length;
+    const careem = tickets.filter(t => t.platform === 'Careem').length;
+    document.getElementById('noonCount').textContent = noon;
+    document.getElementById('careemCount').textContent = careem;
+    document.getElementById('noonPercentage').textContent = ((noon / total) * 100).toFixed(1) + '%';
+    document.getElementById('careemPercentage').textContent = ((careem / total) * 100).toFixed(1) + '%';
+  }
+  
+  // ===== Summary Section =====
+  function renderSummary() {
+    // Financial Overview
+    const totalOriginal = tickets.reduce((sum, t) => sum + (t.originalAmount || 0), 0);
+    const totalComp = tickets.reduce((sum, t) => sum + (t.compensation || 0), 0);
+    const avgComp = tickets.filter(t => t.compensation > 0).length > 0 
+      ? totalComp / tickets.filter(t => t.compensation > 0).length 
+      : 0;
+    const compensationRate = totalOriginal > 0 ? (totalComp / totalOriginal) * 100 : 0;
+    
+    document.getElementById('totalOriginalAmount').textContent = 'AED ' + totalOriginal.toFixed(2);
+    document.getElementById('totalCompensation').textContent = 'AED ' + totalComp.toFixed(2);
+    document.getElementById('avgCompensation').textContent = 'AED ' + avgComp.toFixed(2);
+    document.getElementById('compensationRate').textContent = compensationRate.toFixed(1) + '%';
+    
+    // Platform Performance
+    const noonTickets = tickets.filter(t => t.platform === 'Noon').length;
+    const careemTickets = tickets.filter(t => t.platform === 'Careem').length;
+    const noonComp = tickets.filter(t => t.platform === 'Noon').reduce((sum, t) => sum + (t.compensation || 0), 0);
+    const careemComp = tickets.filter(t => t.platform === 'Careem').reduce((sum, t) => sum + (t.compensation || 0), 0);
+    
+    document.getElementById('noonTickets').textContent = noonTickets;
+    document.getElementById('careemTickets').textContent = careemTickets;
+    document.getElementById('noonCompensation').textContent = 'AED ' + noonComp.toFixed(2);
+    document.getElementById('careemCompensation').textContent = 'AED ' + careemComp.toFixed(2);
+    
+    // Branch Performance
+    const branchCounts = {};
+    tickets.forEach(t => {
+      branchCounts[t.branch] = (branchCounts[t.branch] || 0) + 1;
+    });
+    const topBranch = Object.keys(branchCounts).reduce((a, b) => branchCounts[a] > branchCounts[b] ? a : b, '');
+    const caseCounts = {};
+    tickets.forEach(t => {
+      const type = classifyCase(t.issue);
+      caseCounts[type] = (caseCounts[type] || 0) + 1;
+    });
+    const topCase = Object.keys(caseCounts).reduce((a, b) => caseCounts[a] > caseCounts[b] ? a : b, '');
+    const caseRate = tickets.filter(t => t.compensation > 0).length / tickets.length * 100;
+    const avgOriginal = tickets.reduce((sum, t) => sum + (t.originalAmount || 0), 0) / tickets.length;
+    
+    document.getElementById('topBranch').textContent = topBranch || '-';
+    document.getElementById('topCase').textContent = topCase || '-';
+    document.getElementById('caseRate').textContent = caseRate.toFixed(1) + '%';
+    document.getElementById('avgOriginalAmount').textContent = 'AED ' + avgOriginal.toFixed(2);
+    
+    // Update summary charts
+    updateSummaryCharts();
+  }
+  
+  function updateSummaryCharts() {
+    // Amount Chart
+    const ctx1 = document.getElementById('amountChart').getContext('2d');
+    if (amountChart) amountChart.destroy();
+    amountChart = new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Original Amount', 'Compensation'],
+        datasets: [{
+          data: [
+            tickets.reduce((sum, t) => sum + (t.originalAmount || 0), 0),
+            tickets.reduce((sum, t) => sum + (t.compensation || 0), 0)
+          ],
+          backgroundColor: ['#0d6efd', '#dc3545']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { size: 10 } }
+          }
         }
-        
-        // Initialize file upload
-        function initFileUpload() {
-            const fileDropArea = document.getElementById('fileDropArea');
-            const fileInput = document.getElementById('fileInput');
-            const fileList = document.getElementById('fileList');
-            
-            // Prevent default drag behaviors
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, preventDefaults, false);
-                document.body.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            // Highlight drop area when item is dragged over it
-            ['dragenter', 'dragover'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, unhighlight, false);
-            });
-            
-            // Handle dropped files
-            fileDropArea.addEventListener('drop', handleDrop, false);
-            
-            // Handle file selection via input
-            fileInput.addEventListener('change', function() {
-                handleFiles(this.files);
-            });
-            
-            // Open file selector when drop area is clicked
-            fileDropArea.addEventListener('click', function() {
-                fileInput.click();
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
+      }
+    });
+    
+    // Status Chart
+    const ctx2 = document.getElementById('statusChart').getContext('2d');
+    if (statusChart) statusChart.destroy();
+    statusChart = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['Open', 'Sent', 'Closed'],
+        datasets: [{
+          data: [
+            tickets.filter(t => t.status === 'Open').length,
+            tickets.filter(t => t.status === 'Sent').length,
+            tickets.filter(t => t.status === 'Closed').length
+          ],
+          backgroundColor: ['#0d6efd', '#ffc107', '#198754']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+    
+    // Platform Tickets Chart
+    const ctx3 = document.getElementById('platformTicketsChart').getContext('2d');
+    if (platformTicketsChart) platformTicketsChart.destroy();
+    platformTicketsChart = new Chart(ctx3, {
+      type: 'pie',
+      data: {
+        labels: ['Noon', 'Careem'],
+        datasets: [{
+          data: [
+            tickets.filter(t => t.platform === 'Noon').length,
+            tickets.filter(t => t.platform === 'Careem').length
+          ],
+          backgroundColor: ['#ff7043', '#7e57c2']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { size: 10 } }
+          }
+        }
+      }
+    });
+    
+    // Platform Compensation Chart
+    const ctx4 = document.getElementById('platformCompensationChart').getContext('2d');
+    if (platformCompensationChart) platformCompensationChart.destroy();
+    platformCompensationChart = new Chart(ctx4, {
+      type: 'bar',
+      data: {
+        labels: ['Noon', 'Careem'],
+        datasets: [{
+          label: 'Compensation (AED)',
+          data: [
+            tickets.filter(t => t.platform === 'Noon').reduce((sum, t) => sum + (t.compensation || 0), 0),
+            tickets.filter(t => t.platform === 'Careem').reduce((sum, t) => sum + (t.compensation || 0), 0)
+          ],
+          backgroundColor: ['#ff7043', '#7e57c2']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+    
+    // Branch Cases Chart
+    const ctx5 = document.getElementById('branchCasesChart').getContext('2d');
+    if (branchCasesChart) branchCasesChart.destroy();
+    const branchCounts = {};
+    tickets.forEach(t => {
+      branchCounts[t.branch] = (branchCounts[t.branch] || 0) + 1;
+    });
+    branchCasesChart = new Chart(ctx5, {
+      type: 'horizontalBar',
+      data: {
+        labels: Object.keys(branchCounts),
+        datasets: [{
+          data: Object.values(branchCounts),
+          backgroundColor: '#d32f2f'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: { beginAtZero: true }
+        }
+      }
+    });
+    
+    // Case Types Chart
+    const ctx6 = document.getElementById('caseTypesChart').getContext('2d');
+    if (caseTypesChart) caseTypesChart.destroy();
+    const caseCounts = {};
+    tickets.forEach(t => {
+      const type = classifyCase(t.issue);
+      caseCounts[type] = (caseCounts[type] || 0) + 1;
+    });
+    caseTypesChart = new Chart(ctx6, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(caseCounts),
+        datasets: [{
+          data: Object.values(caseCounts),
+          backgroundColor: ['#d32f2f', '#ff7043', '#66bb6a', '#42a5f5', '#ab47bc', '#78909c']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { size: 10 } }
+          }
+        }
+      }
+    });
+  }
+  
+  // ===== Charts =====
+  function renderCharts() {
+    const byBranch = {};
+    const byCase = {};
+    tickets.forEach(t => {
+      byBranch[t.branch] = (byBranch[t.branch] || 0) + 1;
+      const type = classifyCase(t.issue);
+      byCase[type] = (byCase[type] || 0) + 1;
+    });
+    
+    const branchLabels = Object.keys(byBranch);
+    const branchData = Object.values(byBranch);
+    const caseLabels = Object.keys(byCase);
+    const caseData = Object.values(byCase);
+    
+    // branchChart
+    if (!branchChart) {
+      branchChart = new Chart(document.getElementById('branchChart'), {
+        type: 'bar',
+        data: {
+          labels: branchLabels,
+          datasets: [{
+            label: 'Cases',
+            data: branchData,
+            backgroundColor: 'rgba(211, 47, 47, 0.78)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    } else {
+      branchChart.data.labels = branchLabels;
+      branchChart.data.datasets[0].data = branchData;
+      branchChart.update();
+    }
+    
+    if (!caseChart) {
+      caseChart = new Chart(document.getElementById('caseChart'), {
+        type: 'doughnut',
+        data: {
+          labels: caseLabels,
+          datasets: [{
+            data: caseData,
+            backgroundColor: [
+              'rgba(211, 47, 47, 0.78)',
+              'rgba(255, 112, 67, 0.78)',
+              'rgba(76, 175, 80, 0.78)',
+              'rgba(33, 150, 243, 0.78)',
+              'rgba(156, 39, 176, 0.78)',
+              'rgba(96, 125, 139, 0.78)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                font: { size: 12 },
+                padding: 15
+              }
             }
-            
-            function highlight() {
-                fileDropArea.classList.add('drag-over');
-            }
-            
-            function unhighlight() {
-                fileDropArea.classList.remove('drag-over');
-            }
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles(files);
-            }
-            
-            function handleFiles(files) {
-                if (files.length > 0) {
-                    uploadedFiles = Array.from(files);
-                    displayFiles();
-                }
-            }
-            
-            function displayFiles() {
-                fileList.innerHTML = '';
-                
-                uploadedFiles.forEach((file, index) => {
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.innerHTML = `
-                        <span>${file.name} (${formatFileSize(file.size)})</span>
-                        <button type="button" onclick="removeFile(${index})">
-                            <i class="bi bi-x-circle"></i>
-                        </button>
-                    `;
-                    fileList.appendChild(fileItem);
-                });
-            }
+          }
         }
+      });
+    } else {
+      caseChart.data.labels = caseLabels;
+      caseChart.data.datasets[0].data = caseData;
+      caseChart.update();
+    }
+    
+    document.getElementById('topBranchLabel').textContent = branchLabels.length ? branchLabels[0] : '';
+    document.getElementById('topCaseLabel').textContent = caseLabels.length ? caseLabels[0] : '';
+  }
+  
+  // ===== Case Analysis =====
+  function renderCaseAnalysis() {
+    const branchData = analyzeCases();
+    const container = document.getElementById('branchAnalysisContainer');
+    const branches = Object.keys(branchData);
+    
+    // Calculate overall case level
+    const avgCaseRate = branches.reduce((sum, branch) => sum + branchData[branch].caseRate, 0) / branches.length;
+    const badge = document.getElementById('caseAnalysisBadge');
+    
+    if (avgCaseRate > 30) {
+      badge.className = 'case-badge badge-high';
+      badge.textContent = 'High Level';
+    } else if (avgCaseRate > 15) {
+      badge.className = 'case-badge badge-medium';
+      badge.textContent = 'Medium Level';
+    } else {
+      badge.className = 'case-badge badge-low';
+      badge.textContent = 'Low Level';
+    }
+    
+    // Create HTML for analysis
+    let html = '<div class="branch-analysis-grid">';
+    
+    branches.forEach(branch => {
+      const data = branchData[branch];
+      const maxCases = Math.max(...Object.values(data.cases));
+      
+      html += `
+        <div class="branch-card">
+          <h6>${branch}</h6>
+          <div class="branch-stats">
+            <div class="branch-stat-item">
+              <div class="branch-stat-value">${data.totalCases}</div>
+              <div class="branch-stat-label">Total Cases</div>
+            </div>
+            <div class="branch-stat-item">
+              <div class="branch-stat-value">${data.compensationCases}</div>
+              <div class="branch-stat-label">Compensation Cases</div>
+            </div>
+            <div class="branch-stat-item">
+              <div class="branch-stat-value">${data.caseRate.toFixed(1)}%</div>
+              <div class="branch-stat-label">Case Rate</div>
+            </div>
+            <div class="branch-stat-item">
+              <div class="branch-stat-value">${data.totalCompensation.toFixed(0)}</div>
+              <div class="branch-stat-label">Total Comp</div>
+            </div>
+          </div>
+          
+          <div class="case-reasons">
+            <h6>Case Reasons:</h6>
+      `;
+      
+      // Display case reasons
+      Object.entries(data.cases).forEach(([caseType, count]) => {
+        const percentage = (count / data.totalCases) * 100;
+        html += `
+          <div class="case-reason-item">
+            <div class="case-reason-info">
+              <div class="case-reason-name">${caseType}</div>
+              <div class="case-reason-count">${count} (${percentage.toFixed(1)}%)</div>
+            </div>
+            <div class="case-reason-bar">
+              <div class="case-reason-progress" style="width: ${percentage}%"></div>
+            </div>
+          </div>
+        `;
+      });
+      
+      html += `
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+  }
+  
+  function analyzeCases() {
+    const branchData = {};
+    
+    tickets.forEach(ticket => {
+      if (!branchData[ticket.branch]) {
+        branchData[ticket.branch] = {
+          totalCases: 0,
+          compensationCases: 0,
+          totalCompensation: 0,
+          cases: {}
+        };
+      }
+      
+      branchData[ticket.branch].totalCases++;
+      
+      // If there's compensation, it's a compensation case
+      if (ticket.compensation > 0) {
+        branchData[ticket.branch].compensationCases++;
+        branchData[ticket.branch].totalCompensation += ticket.compensation;
+      }
+      
+      // Classify case type
+      const caseType = classifyCase(ticket.issue);
+      if (!branchData[ticket.branch].cases[caseType]) {
+        branchData[ticket.branch].cases[caseType] = 0;
+      }
+      branchData[ticket.branch].cases[caseType]++;
+    });
+    
+    // Calculate rates and levels
+    const branches = Object.keys(branchData);
+    branches.forEach(branch => {
+      const data = branchData[branch];
+      data.caseRate = (data.compensationCases / data.totalCases) * 100;
+      data.avgCompensation = data.compensationCases > 0 ? data.totalCompensation / data.compensationCases : 0;
+      
+      // Determine case level
+      if (data.caseRate > 30) {
+        data.caseLevel = 'high';
+      } else if (data.caseRate > 15) {
+        data.caseLevel = 'medium';
+      } else {
+        data.caseLevel = 'low';
+      }
+    });
+    
+    return branchData;
+  }
+  
+  function classifyCase(text = '') {
+    const t = (text || '').toLowerCase();
+    if (/cold|temperature|ice|frozen/.test(t)) return 'Cold Food';
+    if (/late|delay|time/.test(t)) return 'Late Delivery';
+    if (/wrong|incorrect|different/.test(t)) return 'Wrong Items';
+    if (/missing|not included|lack/.test(t)) return 'Missing Items';
+    if (/quality|taste|bad|spoiled/.test(t)) return 'Food Quality';
+    return 'Other';
+  }
+  
+  // ===== Actions: Add / Edit / Close / Sample / Reset =====
+  function openAddModal() {
+    document.getElementById('modalTitle').textContent = 'Add Compensation Case';
+    document.getElementById('editingId').value = '';
+    document.getElementById('ticketForm').reset();
+    
+    // Clear image preview and base64 data
+    document.getElementById('imagePreview').style.display = 'none';
+    const base64Input = document.getElementById('f_evidenceBase64');
+    if (base64Input) base64Input.remove();
+    
+    const nowLocal = new Date().toISOString().slice(0, 16);
+    document.getElementById('f_orderDate').value = nowLocal;
+    new bootstrap.Modal(document.getElementById('ticketModal')).show();
+  }
+  
+  document.getElementById('ticketForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('editingId').value;
+    const payload = {
+      orderId: document.getElementById('f_orderId').value.trim(),
+      orderDate: document.getElementById('f_orderDate').value,
+      branch: document.getElementById('f_branch').value,
+      platform: document.getElementById('f_platform').value,
+      issue: document.getElementById('f_issue').value.trim(),
+      originalAmount: Number(document.getElementById('f_originalAmount').value || 0),
+      compensation: Number(document.getElementById('f_compensation').value || 0),
+      evidence: document.getElementById('f_noEvidence').checked ? 'None' : (document.getElementById('f_shortLink').value || document.getElementById('f_evidenceBase64')?.value || 'None'),
+      status: 'Open'
+    };
+    
+    if (!payload.orderId || !payload.orderDate || !payload.branch || !payload.platform || !payload.issue) {
+      showNotif('Fill required fields', 'error');
+      return;
+    }
+    
+    if (id) {
+      const idx = tickets.findIndex(t => t.id === id);
+      if (idx > -1) { 
+        tickets[idx] = { ...tickets[idx], ...payload }; 
+        showNotif('Case updated', 'success'); 
+      }
+    } else {
+      const newTicket = { id: Date.now().toString(), ...payload };
+      tickets.unshift(newTicket); 
+      showNotif('Case added', 'success');
+    }
+    
+    save(); 
+    renderAll();
+    bootstrap.Modal.getInstance(document.getElementById('ticketModal')).hide();
+  });
+  
+  function editTicket(id) {
+    const t = tickets.find(x => x.id === id); 
+    if (!t) return;
+    
+    document.getElementById('editingId').value = t.id;
+    document.getElementById('f_orderId').value = t.orderId || '';
+    document.getElementById('f_orderDate').value = t.orderDate || '';
+    document.getElementById('f_branch').value = t.branch || '';
+    document.getElementById('f_platform').value = t.platform || '';
+    document.getElementById('f_issue').value = t.issue || '';
+    document.getElementById('f_originalAmount').value = t.originalAmount || 0;
+    document.getElementById('f_compensation').value = t.compensation || 0;
+    
+    // Handle evidence
+    if (t.evidence && t.evidence !== 'None') {
+      // If it's a base64 image
+      if (t.evidence.startsWith('data:image')) {
+        document.getElementById('imagePreview').src = t.evidence;
+        document.getElementById('imagePreview').style.display = 'block';
         
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // Remove file
-        function removeFile(index) {
-            uploadedFiles.splice(index, 1);
-            displayFiles();
-        }
-        
-        // Initialize theme
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeIcon(savedTheme);
-        }
-        
-        // Toggle theme
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-            
-            // Update charts with new theme
-            updateChartsTheme(newTheme);
-        }
-        
-        // Update theme icon
-        function updateThemeIcon(theme) {
-            const icon = document.querySelector('#themeToggle i');
-            icon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
-        }
-        
-        // Update charts theme
-        function updateChartsTheme(theme) {
-            const textColor = theme === 'dark' ? '#f8f9fa' : '#333';
-            const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            
-            if (platformChart) {
-                platformChart.options.plugins.legend.labels.color = textColor;
-                platformChart.update();
-            }
-            
-            if (branchChart) {
-                branchChart.options.scales.x.ticks.color = textColor;
-                branchChart.options.scales.y.ticks.color = textColor;
-                branchChart.options.scales.x.grid.color = gridColor;
-                branchChart.options.scales.y.grid.color = gridColor;
-                branchChart.update();
-            }
-        }
-        
-        // Add new ticket
-        function addTicket() {
-            const orderId = document.getElementById('orderId').value;
-            const branch = document.getElementById('branch').value;
-            const platform = document.getElementById('platform').value;
-            const issue = document.getElementById('issue').value;
-            const evidence = document.getElementById('evidence').value;
-            const status = document.getElementById('status').value;
-            
-            const ticket = {
-                id: Date.now(),
-                orderId,
-                branch,
-                platform,
-                issue,
-                evidence,
-                status,
-                dateCreated: new Date().toISOString(),
-                timeline: {
-                    created: new Date().toISOString(),
-                    sent: null,
-                    closed: null
-                },
-                files: uploadedFiles.map(file => ({
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                }))
-            };
-            
-            // Show loading state
-            const submitBtn = document.querySelector('#ticketForm button[type="submit"]');
-            const originalHTML = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="loading-spinner"></span> Adding Ticket...';
-            submitBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                tickets.push(ticket);
-                saveTickets();
-                renderTickets();
-                updateStats();
-                updateCharts();
-                
-                // Reset form
-                document.getElementById('ticketForm').reset();
-                uploadedFiles = [];
-                document.getElementById('fileList').innerHTML = '';
-                
-                // Reset button
-                submitBtn.innerHTML = originalHTML;
-                submitBtn.disabled = false;
-                
-                // Show notification with animation
-                showNotification('Ticket added successfully!');
-                
-                // Play sound (if supported)
-                playSound('add');
-            }, 1000);
-        }
-        
-        // Save tickets to localStorage
-        function saveTickets() {
-            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
-        }
-        
-        // Render tickets table
-        function renderTickets() {
-            const tbody = document.querySelector('#ticketsTable tbody');
-            tbody.innerHTML = '';
-            
-            // Calculate pagination
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginatedTickets = filteredTickets.slice(startIndex, endIndex);
-            
-            if (paginatedTickets.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="text-center py-4">
-                            <i class="bi bi-inbox fs-1 text-muted"></i>
-                            <p class="mt-2 text-muted">No tickets found</p>
-                        </td>
-                    </tr>
-                `;
-                
-                // Update pagination info
-                document.getElementById('showingFrom').textContent = '0';
-                document.getElementById('showingTo').textContent = '0';
-                document.getElementById('totalRecords').textContent = '0';
-                
-                // Render pagination
-                renderPagination(0);
-                return;
-            }
-            
-            // Show skeleton loading
-            tbody.innerHTML = '';
-            for (let i = 0; i < Math.min(itemsPerPage, 5); i++) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><div class="skeleton skeleton-text"></div></td>
-                    <td><div class="skeleton skeleton-text"></div></td>
-                    <td><div class="skeleton skeleton-text"></div></td>
-                    <td><div class="skeleton skeleton-text"></div></td>
-                    <td><div class="skeleton skeleton-text"></div></td>
-                    <td><div class="skeleton skeleton-text"></div></td>
-                    <td><div class="skeleton skeleton-text"></div></td>
-                    <td><div class="skeleton skeleton-text"></div></td>
-                `;
-                tbody.appendChild(tr);
-            }
-            
-            // Simulate loading delay
-            setTimeout(() => {
-                tbody.innerHTML = '';
-                
-                paginatedTickets.forEach(ticket => {
-                    const tr = document.createElement('tr');
-                    
-                    // Calculate progress based on status
-                    let progress = 0;
-                    if (ticket.status === 'Sent') progress = 50;
-                    if (ticket.status === 'Closed') progress = 100;
-                    
-                    tr.innerHTML = `
-                        <td>${highlightSearch(ticket.orderId)}</td>
-                        <td>${ticket.branch}</td>
-                        <td>${ticket.platform}</td>
-                        <td>${ticket.issue}</td>
-                        <td>${ticket.evidence || 'None'}</td>
-                        <td>
-                            <span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status}</span>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: ${progress}%"></div>
-                            </div>
-                        </td>
-                        <td>${formatDate(ticket.dateCreated)}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewTicket(${ticket.id})" title="View Details" data-bs-toggle="tooltip">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-info" onclick="sendEmail(${ticket.id})" title="Send Email" data-bs-toggle="tooltip">
-                                <i class="bi bi-envelope"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-success" onclick="sendWhatsApp(${ticket.id})" title="Send WhatsApp" data-bs-toggle="tooltip">
-                                <i class="bi bi-whatsapp"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-warning" onclick="editTicket(${ticket.id})" title="Edit Ticket" data-bs-toggle="tooltip">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTicket(${ticket.id})" title="Delete Ticket" data-bs-toggle="tooltip">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-                
-                // Update pagination info
-                document.getElementById('showingFrom').textContent = filteredTickets.length > 0 ? startIndex + 1 : '0';
-                document.getElementById('showingTo').textContent = Math.min(endIndex, filteredTickets.length);
-                document.getElementById('totalRecords').textContent = filteredTickets.length;
-                
-                // Render pagination
-                renderPagination(filteredTickets.length);
-                
-                // Re-initialize tooltips
-                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-            }, 500);
-        }
-        
-        // Render pagination
-        function renderPagination(totalItems) {
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-            
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            
-            if (totalPages <= 1) return;
-            
-            // Previous button
-            const prevLi = document.createElement('li');
-            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>`;
-            pagination.appendChild(prevLi);
-            
-            // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                    const li = document.createElement('li');
-                    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                    li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-                    pagination.appendChild(li);
-                } else if (i === currentPage - 2 || i === currentPage + 2) {
-                    const li = document.createElement('li');
-                    li.className = 'page-item disabled';
-                    li.innerHTML = `<a class="page-link" href="#">...</a>`;
-                    pagination.appendChild(li);
-                }
-            }
-            
-            // Next button
-            const nextLi = document.createElement('li');
-            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>`;
-            pagination.appendChild(nextLi);
-        }
-        
-        // Change page
-        function changePage(page) {
-            const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
-            
-            if (page < 1 || page > totalPages) return;
-            
-            currentPage = page;
-            renderTickets();
-            
-            // Scroll to top of table
-            document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Highlight search term
-        function highlightSearch(text) {
-            const searchTerm = document.getElementById('searchOrder').value.toLowerCase();
-            if (!searchTerm) return text;
-            
-            const regex = new RegExp(`(${searchTerm})`, 'gi');
-            return text.replace(regex, '<span class="search-highlight">$1</span>');
-        }
-        
-        // Update statistics
-        function updateStats() {
-            const total = tickets.length;
-            const open = tickets.filter(t => t.status === 'Open').length;
-            const sent = tickets.filter(t => t.status === 'Sent').length;
-            const closed = tickets.filter(t => t.status === 'Closed').length;
-            
-            // Animate the numbers
-            animateValue('totalTickets', parseInt(document.getElementById('totalTickets').textContent), total, 1000);
-            animateValue('openTickets', parseInt(document.getElementById('openTickets').textContent), open, 1000);
-            animateValue('sentTickets', parseInt(document.getElementById('sentTickets').textContent), sent, 1000);
-            animateValue('closedTickets', parseInt(document.getElementById('closedTickets').textContent), closed, 1000);
-        }
-        
-        // Animate value
-        function animateValue(id, start, end, duration) {
-            const obj = document.getElementById(id);
-            const range = end - start;
-            const minTimer = 50;
-            let stepTime = Math.abs(Math.floor(duration / range));
-            stepTime = Math.max(stepTime, minTimer);
-            const startTime = new Date().getTime();
-            const endTime = startTime + duration;
-            
-            function run() {
-                const now = new Date().getTime();
-                const remaining = Math.max((endTime - now) / duration, 0);
-                const value = Math.round(end - (remaining * range));
-                obj.textContent = value;
-                if (value < end) {
-                    requestAnimationFrame(run);
-                }
-            }
-            
-            requestAnimationFrame(run);
-        }
-        
-        // Initialize charts
-        function initCharts() {
-            const theme = document.documentElement.getAttribute('data-theme');
-            const textColor = theme === 'dark' ? '#f8f9fa' : '#333';
-            const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            
-            // Platform Chart
-            const platformCtx = document.getElementById('platformChart').getContext('2d');
-            platformChart = new Chart(platformCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Noon', 'Careem'],
-                    datasets: [{
-                        data: [
-                            tickets.filter(t => t.platform === 'Noon').length,
-                            tickets.filter(t => t.platform === 'Careem').length
-                        ],
-                        backgroundColor: ['#d32f2f', '#ff9800'],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: textColor,
-                                padding: 20,
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleFont: {
-                                size: 16
-                            },
-                            bodyFont: {
-                                size: 14
-                            },
-                            padding: 12,
-                            cornerRadius: 8
-                        }
-                    },
-                    animation: {
-                        animateScale: true,
-                        animateRotate: true
-                    }
-                }
-            });
-            
-            // Branch Chart
-            const branchCtx = document.getElementById('branchChart').getContext('2d');
-            const branches = [...new Set(tickets.map(t => t.branch))];
-            const branchCounts = branches.map(branch => 
-                tickets.filter(t => t.branch === branch).length
-            );
-            
-            branchChart = new Chart(branchCtx, {
-                type: 'bar',
-                data: {
-                    labels: branches,
-                    datasets: [{
-                        label: 'Tickets',
-                        data: branchCounts,
-                        backgroundColor: '#d32f2f',
-                        borderWidth: 0,
-                        borderRadius: 5,
-                        hoverBackgroundColor: '#b71c1c'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0,
-                                color: textColor
-                            },
-                            grid: {
-                                color: gridColor
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: textColor
-                            },
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleFont: {
-                                size: 16
-                            },
-                            bodyFont: {
-                                size: 14
-                            },
-                            padding: 12,
-                            cornerRadius: 8
-                        }
-                    },
-                    animation: {
-                        duration: 2000,
-                        easing: 'easeOutQuart'
-                    }
-                }
-            });
-        }
-        
-        // Update charts
-        function updateCharts() {
-            // Update platform chart
-            platformChart.data.datasets[0].data = [
-                tickets.filter(t => t.platform === 'Noon').length,
-                tickets.filter(t => t.platform === 'Careem').length
-            ];
-            platformChart.update();
-            
-            // Update branch chart
-            const branches = [...new Set(tickets.map(t => t.branch))];
-            const branchCounts = branches.map(branch => 
-                tickets.filter(t => t.branch === branch).length
-            );
-            
-            branchChart.data.labels = branches;
-            branchChart.data.datasets[0].data = branchCounts;
-            branchChart.update();
-        }
-        
-        // Send email
-        function sendEmail(id) {
-            const ticket = tickets.find(t => t.id === id);
-            if (!ticket) return;
-            
-            // Show loading state
-            const btn = event.target.closest('button');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<span class="loading-spinner"></span>';
-            btn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                const toEmails = ticket.platform === 'Noon' ? noonEmails : careemEmails;
-                const subject = `${ticket.platform} Claim – Order ${ticket.orderId} (${ticket.branch})`;
-                
-                let body = `Dear ${ticket.platform} Team,%0A%0A`;
-                if (ticket.evidence && ticket.evidence.toLowerCase() !== 'none') {
-                    body += `Regarding the claim for Order ID: ${ticket.orderId} from ${ticket.branch}, after verification with the branch manager, the order was delivered in full and in proper condition.%0A%0AEvidence: ${ticket.evidence}%0A%0AWe request the claim be rejected and the deducted amount refunded to the restaurant's account.%0A%0A`;
-                } else {
-                    body += `Regarding the claim for Order ID: ${ticket.orderId} from ${ticket.branch}, no visual evidence (photo/video) has been provided.%0A%0AClaims without valid evidence cannot be approved.%0A%0AWe request the claim be rejected and the deducted amount refunded to the restaurant's account.%0A%0A`;
-                }
-                body += `Best regards,%0AAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
-                
-                const mailtoLink = `mailto:${toEmails}?cc=${ccEmails}&subject=${subject}&body=${body}`;
-                window.open(mailtoLink, '_blank');
-                
-                // Update ticket status and timeline
-                ticket.status = 'Sent';
-                if (!ticket.timeline) {
-                    ticket.timeline = {
-                        created: ticket.dateCreated,
-                        sent: null,
-                        closed: null
-                    };
-                }
-                ticket.timeline.sent = new Date().toISOString();
-                
-                saveTickets();
-                renderTickets();
-                updateStats();
-                
-                // Reset button
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
-                
-                showNotification('Email sent successfully!');
-                playSound('send');
-            }, 1000);
-        }
-        
-        // Send WhatsApp
-        function sendWhatsApp(id) {
-            const ticket = tickets.find(t => t.id === id);
-            if (!ticket) return;
-            
-            const branchNumbers = {
-                'Khaldia': '971569494764',
-                'Muroor': '971505414641',
-                'Shabiya11': '971562690688',
-                'AlBarsha': '971567405572',
-                'AlSatwa': '971567970685',
-                'Electra': '971563866859',
-                'Hamdan': '971556886650'
-            };
-            
-            const phone = branchNumbers[ticket.branch] || '';
-            if (!phone) {
-                showNotification('Branch number not found!', 'error');
-                return;
-            }
-            
-            let msg = `🔔 New ${ticket.platform} Claim%nBranch: ${ticket.branch}%nOrder ID: ${ticket.orderId}%nIssue: ${ticket.issue}%n`;
-            if (ticket.evidence && ticket.evidence.toLowerCase() !== 'none') {
-                msg += `Evidence: ${ticket.evidence}%n`;
-            } else {
-                msg += `No evidence provided%n`;
-            }
-            
-            const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-            window.open(waLink, '_blank');
-            
-            showNotification('WhatsApp message sent successfully!');
-            playSound('send');
-        }
-        
-        // View ticket details
-        function viewTicket(id) {
-            const ticket = tickets.find(t => t.id === id);
-            if (!ticket) return;
-            
-            currentTicketId = id;
-            
-            // Populate modal with ticket data
-            document.getElementById('viewOrderId').textContent = ticket.orderId;
-            document.getElementById('viewBranch').textContent = ticket.branch;
-            document.getElementById('viewPlatform').textContent = ticket.platform;
-            document.getElementById('viewStatus').innerHTML = `<span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status}</span>`;
-            document.getElementById('viewIssue').textContent = ticket.issue;
-            document.getElementById('viewEvidence').textContent = ticket.evidence || 'None';
-            document.getElementById('viewDateCreated').textContent = formatDate(ticket.dateCreated);
-            
-            // Display attachments
-            const attachmentsDiv = document.getElementById('viewAttachments');
-            attachmentsDiv.innerHTML = '';
-            
-            if (ticket.files && ticket.files.length > 0) {
-                ticket.files.forEach(file => {
-                    const fileDiv = document.createElement('div');
-                    fileDiv.className = 'file-item';
-                    fileDiv.innerHTML = `
-                        <span>${file.name} (${formatFileSize(file.size)})</span>
-                    `;
-                    attachmentsDiv.appendChild(fileDiv);
-                });
-            } else {
-                attachmentsDiv.innerHTML = '<p class="text-muted">No attachments</p>';
-            }
-            
-            // Populate timeline
-            document.getElementById('timelineCreated').textContent = formatDate(ticket.timeline?.created || ticket.dateCreated);
-            
-            if (ticket.timeline?.sent) {
-                document.getElementById('timelineSentItem').style.display = 'block';
-                document.getElementById('timelineSent').textContent = formatDate(ticket.timeline.sent);
-            } else {
-                document.getElementById('timelineSentItem').style.display = 'none';
-            }
-            
-            if (ticket.timeline?.closed) {
-                document.getElementById('timelineClosedItem').style.display = 'block';
-                document.getElementById('timelineClosed').textContent = formatDate(ticket.timeline.closed);
-            } else {
-                document.getElementById('timelineClosedItem').style.display = 'none';
-            }
-            
-            // Show modal
-            const viewModal = new bootstrap.Modal(document.getElementById('viewTicketModal'));
-            viewModal.show();
-        }
-        
-        // Edit ticket
-        function editTicket(id) {
-            const ticket = tickets.find(t => t.id === id);
-            if (!ticket) return;
-            
-            currentTicketId = id;
-            
-            // Populate edit form
-            document.getElementById('editTicketId').value = ticket.id;
-            document.getElementById('editOrderId').value = ticket.orderId;
-            document.getElementById('editBranch').value = ticket.branch;
-            document.getElementById('editPlatform').value = ticket.platform;
-            document.getElementById('editStatus').value = ticket.status;
-            document.getElementById('editIssue').value = ticket.issue;
-            document.getElementById('editEvidence').value = ticket.evidence || '';
-            
-            // Show modal
-            const editModal = new bootstrap.Modal(document.getElementById('editTicketModal'));
-            editModal.show();
-        }
-        
-        // Save edited ticket
-        function saveEditedTicket() {
-            const id = parseInt(document.getElementById('editTicketId').value);
-            const ticket = tickets.find(t => t.id === id);
-            
-            if (!ticket) return;
-            
-            // Show loading state
-            const saveBtn = document.getElementById('saveTicketBtn');
-            const originalHTML = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
-            saveBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Update ticket data
-                ticket.orderId = document.getElementById('editOrderId').value;
-                ticket.branch = document.getElementById('editBranch').value;
-                ticket.platform = document.getElementById('editPlatform').value;
-                ticket.status = document.getElementById('editStatus').value;
-                ticket.issue = document.getElementById('editIssue').value;
-                ticket.evidence = document.getElementById('editEvidence').value;
-                
-                // Update timeline if status changed
-                if (!ticket.timeline) {
-                    ticket.timeline = {
-                        created: ticket.dateCreated,
-                        sent: null,
-                        closed: null
-                    };
-                }
-                
-                if (ticket.status === 'Sent' && !ticket.timeline.sent) {
-                    ticket.timeline.sent = new Date().toISOString();
-                }
-                
-                if (ticket.status === 'Closed' && !ticket.timeline.closed) {
-                    ticket.timeline.closed = new Date().toISOString();
-                }
-                
-                saveTickets();
-                renderTickets();
-                updateStats();
-                updateCharts();
-                
-                // Close modal
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('editTicketModal'));
-                editModal.hide();
-                
-                // Reset button
-                saveBtn.innerHTML = originalHTML;
-                saveBtn.disabled = false;
-                
-                showNotification('Ticket updated successfully!');
-                playSound('save');
-            }, 1000);
-        }
-        
-        // Delete ticket
-        function deleteTicket(id) {
-            if (confirm('Are you sure you want to delete this ticket?')) {
-                tickets = tickets.filter(t => t.id !== id);
-                saveTickets();
-                renderTickets();
-                updateStats();
-                updateCharts();
-                
-                showNotification('Ticket deleted successfully!');
-                playSound('delete');
-            }
-        }
-        
-        // Apply filters
-        function applyFilters() {
-            const searchOrder = document.getElementById('searchOrder').value.toLowerCase();
-            const filterBranch = document.getElementById('filterBranch').value;
-            const filterPlatform = document.getElementById('filterPlatform').value;
-            const filterStatus = document.getElementById('filterStatus').value;
-            
-            filteredTickets = tickets.filter(ticket => {
-                const matchOrder = ticket.orderId.toLowerCase().includes(searchOrder);
-                const matchBranch = !filterBranch || ticket.branch === filterBranch;
-                const matchPlatform = !filterPlatform || ticket.platform === filterPlatform;
-                const matchStatus = !filterStatus || ticket.status === filterStatus;
-                
-                return matchOrder && matchBranch && matchPlatform && matchStatus;
-            });
-            
-            // Reset to first page when filters change
-            currentPage = 1;
-            renderTickets();
-        }
-        
-        // Reset filters
-        function resetFilters() {
-            document.getElementById('searchOrder').value = '';
-            document.getElementById('filterBranch').value = '';
-            document.getElementById('filterPlatform').value = '';
-            document.getElementById('filterStatus').value = '';
-            
-            filteredTickets = [...tickets];
-            currentPage = 1;
-            renderTickets();
-        }
-        
-        // Export to CSV
-        function exportToCSV() {
-            showNotification('Preparing CSV export...', 'info');
-            
-            setTimeout(() => {
-                let csv = 'Order ID,Branch,Platform,Issue,Evidence,Status,Date Created\n';
-                
-                filteredTickets.forEach(ticket => {
-                    csv += `"${ticket.orderId}","${ticket.branch}","${ticket.platform}","${ticket.issue}","${ticket.evidence || ''}","${ticket.status}","${formatDate(ticket.dateCreated)}"\n`;
-                });
-                
-                const blob = new Blob([csv], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.setAttribute('hidden', '');
-                a.setAttribute('href', url);
-                a.setAttribute('download', 'crispy_chicken_tickets.csv');
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                
-                showNotification('Data exported successfully!');
-                playSound('export');
-            }, 1000);
-        }
-        
-        // Export to PDF
-        function exportToPDF() {
-            showNotification('Preparing PDF export...', 'info');
-            
-            setTimeout(() => {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title
-                doc.setFontSize(18);
-                doc.text('Crispy Chicken Delivery Tickets', 105, 15, { align: 'center' });
-                
-                // Add date
-                doc.setFontSize(10);
-                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
-                
-                // Prepare table data
-                const tableData = filteredTickets.map(ticket => [
-                    ticket.orderId,
-                    ticket.branch,
-                    ticket.platform,
-                    ticket.issue,
-                    ticket.evidence || 'None',
-                    ticket.status,
-                    formatDate(ticket.dateCreated)
-                ]);
-                
-                // Add table
-                doc.autoTable({
-                    head: [['Order ID', 'Branch', 'Platform', 'Issue', 'Evidence', 'Status', 'Date Created']],
-                    body: tableData,
-                    startY: 30,
-                    theme: 'grid',
-                    headStyles: { fillColor: [211, 47, 47] },
-                    styles: { fontSize: 8, cellPadding: 3 }
-                });
-                
-                // Save PDF
-                doc.save('crispy_chicken_tickets.pdf');
-                
-                showNotification('PDF exported successfully!');
-                playSound('export');
-            }, 1000);
-        }
-        
-        // Format date
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }
-        
-        // Show notification
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-            
-            notificationText.textContent = message;
-            
-            if (type === 'error') {
-                notification.style.borderLeftColor = '#dc3545';
-                notification.querySelector('i').className = 'bi bi-exclamation-circle-fill';
-                notification.querySelector('i').style.color = '#dc3545';
-            } else if (type === 'info') {
-                notification.style.borderLeftColor = '#0dcaf0';
-                notification.querySelector('i').className = 'bi bi-info-circle-fill';
-                notification.querySelector('i').style.color = '#0dcaf0';
-            } else {
-                notification.style.borderLeftColor = 'var(--crispy-red)';
-                notification.querySelector('i').className = 'bi bi-check-circle-fill';
-                notification.querySelector('i').style.color = 'var(--crispy-red)';
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Play sound
-        function playSound(action) {
-            // Create audio context
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Create oscillator
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            // Set different sounds for different actions
-            switch(action) {
-                case 'add':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.value = 523.25; // C5
-                    gainNode.gain.value = 0.3;
-                    break;
-                case 'send':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.value = 659.25; // E5
-                    gainNode.gain.value = 0.3;
-                    break;
-                case 'save':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.value = 783.99; // G5
-                    gainNode.gain.value = 0.3;
-                    break;
-                case 'delete':
-                    oscillator.type = 'sawtooth';
-                    oscillator.frequency.value = 261.63; // C4
-                    gainNode.gain.value = 0.2;
-                    break;
-                case 'export':
-                    oscillator.type = 'triangle';
-                    oscillator.frequency.value = 440; // A4
-                    gainNode.gain.value = 0.3;
-                    break;
-                default:
-                    oscillator.type = 'sine';
-                    oscillator.frequency.value = 440; // A4
-                    gainNode.gain.value = 0.3;
-            }
-            
-            // Start and stop the sound
-            oscillator.start();
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
-            oscillator.stop(audioContext.currentTime + 0.5);
-        }
-    </script>
+        const base64Input = document.createElement('input');
+        base64Input.type = 'hidden';
+        base64Input.id = 'f_evidenceBase64';
+        base64Input.value = t.evidence;
+        document.getElementById('ticketForm').appendChild(base64Input);
+      } else if (t.evidence.startsWith('https://crispy.ch/t/')) {
+        // If it's a short link
+        document.getElementById('f_shortLink').value = t.evidence;
+      } else {
+        // If it's a regular URL
+        document.getElementById('f_evidence').value = t.evidence;
+      }
+    } else {
+      document.getElementById('f_noEvidence').checked = true;
+    }
+    
+    autogrow(document.getElementById('f_issue'));
+    new bootstrap.Modal(document.getElementById('ticketModal')).show();
+  }
+  
+  function closeTicket(id) {
+    const t = tickets.find(x => x.id === id); 
+    if (!t) return;
+    t.status = 'Closed'; 
+    save(); 
+    renderAll(); 
+    showNotif('Case closed', 'success');
+  }
+  
+  function addSample() {
+    const sample = [
+      { 
+        id: Date.now().toString() + 'a', 
+        orderId: 'CR' + Math.floor(Math.random() * 900000 + 100000), 
+        orderDate: new Date().toISOString(), 
+        branch: 'Crispy Chicken Khalidiya', 
+        platform: 'Careem', 
+        issue: 'Food was cold and delivery was late', 
+        originalAmount: 85.00,
+        compensation: 25.00, 
+        evidence: 'None', 
+        status: 'Open' 
+      },
+      { 
+        id: Date.now().toString() + 'b', 
+        orderId: 'ORD' + Math.floor(Math.random() * 900000 + 100000), 
+        orderDate: new Date().toISOString(), 
+        branch: 'Crispy Chicken Muroor', 
+        platform: 'Noon', 
+        issue: 'Wrong order items received', 
+        originalAmount: 120.00,
+        compensation: 45.00, 
+        evidence: 'None', 
+        status: 'Open' 
+      }
+    ];
+    tickets = sample.concat(tickets); 
+    save(); 
+    renderAll(); 
+    showNotif('Sample cases added', 'success');
+  }
+  
+  function resetAll() {
+    if (!confirm('Reset all data?')) return;
+    localStorage.removeItem('crispyTickets'); 
+    tickets = [];
+    renderAll();
+    showNotif('Data reset', 'success');
+  }
+  
+  // ===== Communications =====
+  function sendEmail(id) {
+    const t = tickets.find(x => x.id === id); 
+    if (!t) return;
+    const subject = `Compensation Case — Order ${t.orderId}`;
+    const body = `Order ID: ${t.orderId}\nDate: ${formatDateISO(t.orderDate)}\nBranch: ${t.branch}\nPlatform: ${t.platform}\nCase: ${t.issue}\nOriginal Amount: AED ${Number(t.originalAmount || 0).toFixed(2)}\nCompensation: AED ${Number(t.compensation || 0).toFixed(2)}\nStatus: ${t.status}`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    t.status = 'Sent';
+    save();
+    renderAll();
+    showNotif('Email client opened', 'success');
+  }
+  
+  function sendWhatsApp(id) {
+    const t = tickets.find(x => x.id === id); 
+    if (!t) return;
+    const bn = branchWhats[t.branch] || '';
+    const msg = `Compensation Case\nOrder: ${t.orderId}\nBranch: ${t.branch}\nCase: ${t.issue}\nOriginal Amount: AED ${Number(t.originalAmount || 0).toFixed(2)}\nCompensation: AED ${Number(t.compensation || 0).toFixed(2)}`;
+    if (bn) {
+      window.open(`https://wa.me/${bn}?text=${encodeURIComponent(msg)}`, '_blank');
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+    t.status = 'Sent';
+    save();
+    renderAll();
+    showNotif('WhatsApp opened', 'success');
+  }
+  
+  function copyTicket(id) {
+    const t = tickets.find(x => x.id === id); 
+    if (!t) return;
+    const txt = `Order ID: ${t.orderId}\nDate: ${formatDateISO(t.orderDate)}\nBranch: ${t.branch}\nPlatform: ${t.platform}\nCase: ${t.issue}\nOriginal Amount: AED ${Number(t.originalAmount || 0).toFixed(2)}\nCompensation: AED ${Number(t.compensation || 0).toFixed(2)}`;
+    navigator.clipboard.writeText(txt).then(() => showNotif('Copied to clipboard', 'success'), () => showNotif('Copy failed', 'error'));
+  }
+  
+  // ===== Issue modal =====
+  function openIssueModal(id) {
+    const t = tickets.find(x => x.id === id); 
+    if (!t) return;
+    document.getElementById('issueText').textContent = t.issue;
+    new bootstrap.Modal(document.getElementById('issueModal')).show();
+  }
+  
+  // ===== Dock logic =====
+  dockToggle.addEventListener('click', () => {
+    dockPanel.classList.toggle('show');
+  });
+  
+  // Draggable dock
+  (function() {
+    let dragging = false, offsetX = 0, offsetY = 0;
+    dock.addEventListener('mousedown', (e) => {
+      if (e.target.id === 'dockToggle' || e.target.closest('.dock-panel')) return;
+      dragging = true;
+      const rect = dock.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      dock.style.transition = 'none';
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      dock.style.left = (e.clientX - offsetX) + 'px';
+      dock.style.top = (e.clientY - offsetY) + 'px';
+      dock.style.right = 'auto'; dock.style.bottom = 'auto';
+    });
+    document.addEventListener('mouseup', () => { 
+      dragging = false; 
+      document.body.style.userSelect = 'auto'; 
+      dock.style.transition = ''; 
+    });
+  })();
+  
+  // ===== Auto-grow textarea =====
+  function autogrow(el) { 
+    if (!el) return; 
+    el.style.height = 'auto'; 
+    el.style.height = (el.scrollHeight) + 'px'; 
+  }
+  document.addEventListener('input', (e) => { 
+    if (e.target && e.target.matches('textarea.autogrow')) autogrow(e.target); 
+  });
+  
+  // ===== Search & filters =====
+  searchInput.addEventListener('input', debounce(() => renderTickets(), 200));
+  filterBranch.addEventListener('change', () => renderTickets());
+  filterPlatform.addEventListener('change', () => renderTickets());
+  function debounce(fn, ms = 200) { 
+    let t; 
+    return (...a) => { 
+      clearTimeout(t); 
+      t = setTimeout(() => fn(...a), ms); 
+    }; 
+  }
+  
+  // ===== Export functions =====
+  function exportExcel() {
+    const wb = XLSX.utils.book_new();
+    const data = tickets.map(t => ({
+      OrderID: t.orderId,
+      OrderDate: t.orderDate,
+      Branch: t.branch,
+      Platform: t.platform,
+      Case: t.issue,
+      OriginalAmount: t.originalAmount,
+      Compensation: t.compensation,
+      Evidence: t.evidence,
+      Status: t.status,
+      DateCreated: t.dateCreated || ''
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, "Cases");
+    XLSX.writeFile(wb, `compensation_cases_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+  
+  async function exportPDF() {
+    try {
+      dockPanel.classList.remove('show');
+      dockToggle.style.display = 'none';
+      await sleep(150);
+      const el = document.querySelector('#ticketsContainer');
+      const canvas = await html2canvas(el, { scale: 1.5, useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgWidth = pageWidth - 20;
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+      pdf.save(`cases_${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (err) { 
+      console.error(err); 
+      showNotif('PDF export failed', 'error'); 
+    } finally { 
+      dockToggle.style.display = 'flex'; 
+    }
+  }
+  
+  async function exportDashboardSummary() {
+    try {
+      dockPanel.classList.remove('show'); 
+      dockToggle.style.display = 'none';
+      await sleep(200);
+      const summaryEl = document.querySelector('.summary-section');
+      const reportsEl = document.getElementById('reports');
+      const ticketsEl = document.getElementById('ticketsContainer');
+      const caseAnalysisEl = document.querySelector('.case-analysis-section');
+      
+      // Render each section to canvas
+      const canvas1 = await html2canvas(summaryEl, { scale: 1.5, useCORS: true });
+      const canvas2 = await html2canvas(reportsEl, { scale: 1.5, useCORS: true });
+      const canvas3 = await html2canvas(ticketsEl, { scale: 1.5, useCORS: true });
+      const canvas4 = await html2canvas(caseAnalysisEl, { scale: 1.5, useCORS: true });
+      
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageW = pdf.internal.pageSize.getWidth();
+      
+      // First page: summary
+      pdf.addPage();
+      const img1 = canvas1.toDataURL('image/png');
+      const img1Props = pdf.getImageProperties(img1);
+      const img1W = pageW - 20;
+      const img1H = img1Props.height * img1W / img1Props.width;
+      pdf.addImage(img1, 'PNG', 10, 10, img1W, img1H);
+      
+      // Second page: reports
+      pdf.addPage();
+      const img2 = canvas2.toDataURL('image/png');
+      const img2Props = pdf.getImageProperties(img2);
+      const img2W = pageW - 20;
+      const img2H = img2Props.height * img2W / img2Props.width;
+      pdf.addImage(img2, 'PNG', 10, 10, img2W, img2H);
+      
+      // Third page: cases table
+      pdf.addPage();
+      const img3 = canvas3.toDataURL('image/png');
+      const img3Props = pdf.getImageProperties(img3);
+      const img3W = pageW - 20;
+      const img3H = img3Props.height * img3W / img3Props.width;
+      pdf.addImage(img3, 'PNG', 10, 10, img3W, img3H);
+      
+      // Fourth page: case analysis
+      pdf.addPage();
+      const img4 = canvas4.toDataURL('image/png');
+      const img4Props = pdf.getImageProperties(img4);
+      const img4W = pageW - 20;
+      const img4H = img4Props.height * img4W / img4Props.width;
+      pdf.addImage(img4, 'PNG', 10, 10, img4W, img4H);
+      
+      pdf.save(`dashboard_summary_${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (err) { 
+      console.error(err); 
+      showNotif('Dashboard PDF export failed', 'error'); 
+    } finally { 
+      dockToggle.style.display = 'flex'; 
+    }
+  }
+  
+  // ===== Usability heatmap & export log =====
+  function initHeatmap() {
+    heatmapInstance = h337.create({ 
+      container: heatmapContainer, 
+      radius: 35, 
+      maxOpacity: 0.6, 
+      minOpacity: 0.05, 
+      blur: 0.75 
+    });
+    document.addEventListener('click', (e) => recordInteraction(e));
+    document.addEventListener('mousemove', throttle((e) => recordMouseMove(e), 120));
+  }
+  
+  function toggleHeatmap() {
+    heatmapVisible = !heatmapVisible;
+    heatmapContainer.style.display = heatmapVisible ? 'block' : 'none';
+    document.getElementById('heatmapToggleBtn').classList.toggle('active', heatmapVisible);
+  }
+  
+  function recordInteraction(e) {
+    const el = e.target;
+    const entry = { 
+      t: Date.now(), 
+      type: 'click', 
+      x: e.clientX, 
+      y: e.clientY, 
+      tag: el.tagName, 
+      id: el.id || null, 
+      cls: el.className || null 
+    };
+    interactions.push(entry);
+    if (interactions.length > 500) interactions.shift();
+    if (heatmapInstance) heatmapInstance.addData({ x: e.clientX, y: e.clientY, value: 1 });
+  }
+  
+  function recordMouseMove(e) {
+    if (!heatmapVisible) return;
+    if (heatmapInstance) heatmapInstance.addData({ x: e.clientX, y: e.clientY, value: 0.15 });
+  }
+  
+  function exportUsabilityLog() {
+    const data = JSON.stringify({ at: new Date().toISOString(), interactions }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); 
+    a.href = url; 
+    a.download = `usability_log_${new Date().toISOString().slice(0, 10)}.json`; 
+    a.click(); 
+    URL.revokeObjectURL(url);
+    showNotif('Usability log exported', 'success');
+  }
+  
+  // ===== Helpers =====
+  function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
+  function escapeHtml(s = '') { 
+    return (s + '').replace(/[&<>"']/g, c => ({ 
+      '&': '&amp;', 
+      '<': '&lt;', 
+      '>': '&gt;', 
+      '"': '&quot;', 
+      "'": '&#39;' 
+    }[c])); 
+  }
+  function throttle(fn, ms) { 
+    let last = 0; 
+    return function(...a) { 
+      const now = Date.now(); 
+      if (now - last > ms) { 
+        last = now; 
+        fn(...a); 
+      } 
+    }; 
+  }
+  
+  // ===== Setup listeners =====
+  function setupListeners() {
+    // Close dock on outside click
+    document.addEventListener('click', (e) => {
+      if (!dock.contains(e.target) && dockPanel.classList.contains('show')) {
+        dockPanel.classList.remove('show');
+      }
+    });
+    
+    // Auto-grow init
+    document.querySelectorAll('textarea.autogrow').forEach(t => autogrow(t));
+    
+    // Populate branch selects
+    populateBranchFilters();
+  }
+  
+  // ===== Check for duplicate order IDs =====
+  function checkDuplicateOrder(orderId, platform, excludeId = null) {
+    const filteredTickets = excludeId 
+      ? tickets.filter(t => t.id !== excludeId)
+      : tickets;
+    
+    return filteredTickets.some(ticket => {
+      if (platform === 'Careem' && ticket.orderId === orderId) {
+        return true;
+      }
+      if (platform === 'Noon' && ticket.orderId === orderId) {
+        return true;
+      }
+      return false;
+    });
+  }
+  
+  // ===== Check for duplicates while typing =====
+  document.getElementById('f_orderId').addEventListener('input', function(e) {
+    const orderId = e.target.value.trim();
+    const platform = document.getElementById('f_platform').value;
+    const id = document.getElementById('editingId').value;
+    
+    if (!orderId || !platform) {
+      document.getElementById('duplicateWarning').classList.remove('show');
+      return;
+    }
+    
+    const isDuplicate = checkDuplicateOrder(orderId, platform, id);
+    
+    if (isDuplicate) {
+      document.getElementById('duplicateWarning').classList.add('show');
+      document.getElementById('duplicateWarning').textContent = 'This order ID already exists!';
+    } else {
+      document.getElementById('duplicateWarning').classList.remove('show');
+    }
+  });
+  
+  document.getElementById('f_platform').addEventListener('change', function(e) {
+    const orderId = document.getElementById('f_orderId').value.trim();
+    const id = document.getElementById('editingId').value;
+    
+    if (!orderId) {
+      document.getElementById('duplicateWarning').classList.remove('show');
+      return;
+    }
+    
+    const isDuplicate = checkDuplicateOrder(orderId, e.target.value, id);
+    
+    if (isDuplicate) {
+      document.getElementById('duplicateWarning').classList.add('show');
+      document.getElementById('duplicateWarning').textContent = 'This order ID already exists!';
+    } else {
+      document.getElementById('duplicateWarning').classList.remove('show');
+    }
+  });
+  </script>
 </body>
 </html>
